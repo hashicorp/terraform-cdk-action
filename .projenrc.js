@@ -61,6 +61,11 @@ const project = new GitHubActionTypeScriptProject({
   prettier: true,
 
   actionMetadata: {
+    author: "HashiCorp, Inc.",
+    branding: {
+      color: "purple",
+      icon: "terminal",
+    },
     inputs: Object.entries(inputs).reduce(
       (acc, [key, value]) => ({ ...acc, [key]: { ...value, type: undefined } }),
       {}

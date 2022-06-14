@@ -5,6 +5,10 @@ description: A GitHub Action for terraform-cdk-action
 runs:
   using: node16
   main: dist/index.js
+author: HashiCorp, Inc.
+branding:
+  color: purple
+  icon: terminal
 inputs:
   cdktfVersion:
     description: The version of cdktf CLI to use
