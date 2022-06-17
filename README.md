@@ -32,6 +32,10 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      # Remove this step if you don't have any
+      - name: Run unit tests
+        run: yarn test
+
       - name: Run Terraform CDK
         uses: hashicorp/terraform-cdk-action@v0.1.0
         with:
@@ -71,6 +75,10 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
+
+      # Remove this step if you don't have any
+      - name: Run unit tests
+        run: yarn test
 
       - name: Run Terraform CDK
         uses: hashicorp/terraform-cdk-action@v0.1.0
