@@ -16,6 +16,7 @@
     ".projen/tasks.json",
     "action.yml",
     "LICENSE",
+    "src/inputs.ts",
     "tsconfig.dev.json",
     "tsconfig.json"
   ],
