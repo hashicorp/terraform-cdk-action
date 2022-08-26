@@ -122,11 +122,11 @@ export async function run(): Promise<void> {
       await execute(
         `cdktf plan ${input.stackName}`,
         (output, runUrl) =>
-          postCommentOnPr(`### ✅  Successfully planned Terraform CDK Stack '${
+          postCommentOnPr(`### ✅ Successfully planned Terraform CDK Stack '${
             input.stackName
           }'
           
-${runUrl ? `<a target="_blank" href='${runUrl}'>🌍View run</a>` : ""}
+${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
 
 <details><summary>Show Plan</summary>
 
@@ -140,7 +140,7 @@ ${output}
             input.stackName
           }'
 
-${runUrl ? `<a target="_blank" href='${runUrl}'>🌍View run</a>` : ""}
+${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
 
 <details><summary>${error}</summary>
 
@@ -155,11 +155,11 @@ ${output}
       await execute(
         `cdktf apply ${input.stackName} --auto-approve`,
         (output, runUrl) =>
-          postCommentOnPr(`### ✅  Successfully applied Terraform CDK Stack '${
+          postCommentOnPr(`### ✅ Successfully applied Terraform CDK Stack '${
             input.stackName
           }'
 
-${runUrl ? `<a target="_blank" href='${runUrl}'>🌍View run</a>` : ""}
+${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
 <details><summary>Show Run</summary>
 
 \`\`\`shell
@@ -172,7 +172,7 @@ ${output}
             input.stackName
           }'
 
-          ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍View run</a>` : ""}
+          ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
 <details><summary>${error}</summary>
 
 \`\`\`shell
