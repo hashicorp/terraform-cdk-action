@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Generate module and provider bindings
+        run: npx cdktf get
+
       # Remove this step if you don't have any
       - name: Run unit tests
         run: yarn test
@@ -75,6 +78,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
+
+      - name: Generate module and provider bindings
+        run: npx cdktf get
 
       # Remove this step if you don't have any
       - name: Run unit tests
