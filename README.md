@@ -47,7 +47,7 @@ jobs:
           stackName: my-stack
           mode: plan-only
           terraformCloudToken: ${{ secrets.TF_API_TOKEN }}
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### Apply a stack after a PR is merged
@@ -63,10 +63,11 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  issues: read
 
 jobs:
   terraform:
-    name: "Terraform CDK Diff"
+    name: "Terraform CDK Deploy"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -94,5 +95,5 @@ jobs:
           stackName: my-stack
           mode: auto-approve-apply
           terraformCloudToken: ${{ secrets.TF_API_TOKEN }}
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
