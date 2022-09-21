@@ -4,6 +4,21 @@ This is the Terraform CDK GitHub Action, it allows you to run Terraform CDK as p
 
 ## Usage
 
+These are the configuration options for the action:
+
+| **Name**            | **Type**                            | **Description**                                                                                   | **Default** |
+| ------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------- | ----------- |
+| cdktfVersion        | string                              | The version of cdktf CLI to use                                                                   | 0.11.1      |
+| terraformVersion    | string                              | The version of terraform to use                                                                   | 1.2.2       |
+| workingDirectory    | string                              | The directory to use for the project                                                              | ./          |
+| stackName           | string                              | The stack to run / plan                                                                           | <required>  |
+| mode                | "plan-only" \| "auto-approve-apply" | What action to take: 'plan-only' only runs a plan, 'plan-and-apply' runs a plan and then an apply | <required>  |
+| terraformCloudToken | string                              | The terraform cloud / terraform enterprise token to use                                           | <optional>  |
+| githubToken         | string                              | The github token to use                                                                           | <optional>  |
+| commentOnPr         | boolean                             | Whether to comment the plan / the status on the PR                                                | true        |
+
+## Example Configurations
+
 The examples assume you have your provider credentials in Terraform Cloud and you are using remote execution to access the provider credentials or you are passing the provider credentials as environment variables [through the `env` key on the action](https://github.com/Azure/actions-workflow-samples/blob/master/assets/create-secrets-for-GitHub-workflows.md#consume-secrets-in-your-workflow). Please don't use this action with the default `local` backend as the state might get lost and locking might not work.
 
 ### Comment the plan of a stack on a PR
