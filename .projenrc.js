@@ -23,12 +23,14 @@ const inputs = {
     type: "string",
   },
   stackName: {
-    description: "The stack to run / plan",
-    required: true,
+    description:
+      "The stack to run / plan, only required when the mode is plan 'plan-only' or 'plan-and-apply'",
+    required: false,
     type: "string",
   },
   mode: {
-    description: "What action to take: 'plan-only', 'plan-and-apply'",
+    description:
+      "What action to take: 'synth-only', 'plan-only', 'plan-and-apply'",
     required: true,
     type: "string",
   },
