@@ -57,7 +57,7 @@ jobs:
       - name: Run Terraform CDK
         uses: hashicorp/terraform-cdk-action@v0.1.0
         with:
-          terraformVersion: 1.0.7
+          terraformVersion: 1.3.0
           cdktfVersion: 0.12.2
           stackName: my-stack
           mode: plan-only
@@ -105,7 +105,7 @@ jobs:
       - name: Run Terraform CDK
         uses: hashicorp/terraform-cdk-action@v0.1.0
         with:
-          terraformVersion: 1.0.7
+          terraformVersion: 1.3.0
           cdktfVersion: 0.11.2
           stackName: my-stack
           mode: auto-approve-apply
@@ -149,7 +149,7 @@ jobs:
       - name: Test the synth
         uses: hashicorp/terraform-cdk-action@v0.1.0
         with:
-          terraformVersion: 1.0.7
+          terraformVersion: 1.3.0
           cdktfVersion: 0.12.2
           stackName: my-stack
           mode: synth-only
