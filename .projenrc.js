@@ -6,7 +6,7 @@ const {
 const inputs = {
   cdktfVersion: {
     description: "The version of cdktf CLI to use",
-    default: "0.11.1",
+    default: "0.12.2",
     required: false,
     type: "string",
   },

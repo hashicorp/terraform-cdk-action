@@ -8,7 +8,7 @@ These are the configuration options for the action:
 
 | **Name**            | **Type**                                            | **Description**                                                                                                                              | **Default** |
 | ------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| cdktfVersion        | string                                              | The version of cdktf CLI to use                                                                                                              | 0.11.1      |
+| cdktfVersion        | string                                              | The version of cdktf CLI to use                                                                                                              | 0.12.2      |
 | terraformVersion    | string                                              | The version of terraform to use                                                                                                              | 1.2.2       |
 | workingDirectory    | string                                              | The directory to use for the project                                                                                                         | ./          |
 | stackName           | string                                              | The stack to run / plan, only required when the mode is plan 'plan-only' or 'plan-and-apply'                                                 | <optional>  |
@@ -58,7 +58,7 @@ jobs:
         uses: hashicorp/terraform-cdk-action@v0.1.0
         with:
           terraformVersion: 1.0.7
-          cdktfVersion: 0.11.1
+          cdktfVersion: 0.12.2
           stackName: my-stack
           mode: plan-only
           terraformCloudToken: ${{ secrets.TF_API_TOKEN }}
@@ -150,7 +150,7 @@ jobs:
         uses: hashicorp/terraform-cdk-action@v0.1.0
         with:
           terraformVersion: 1.0.7
-          cdktfVersion: 0.11.1
+          cdktfVersion: 0.12.2
           stackName: my-stack
           mode: synth-only
 ```
