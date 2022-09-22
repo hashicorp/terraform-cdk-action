@@ -118,7 +118,31 @@ export async function run(): Promise<void> {
 
   core.debug(`Running action in '${input.mode}' mode`);
   switch (input.mode) {
+    case "synth-only":
+      await execute(
+        `cdktf synth`,
+        () =>
+          postCommentOnPr(
+            `✅ Successfully synthesized the Terraform CDK Application`
+          ),
+        (error, output) =>
+          postCommentOnPr(`### ❌ Error synthesizing the Terraform CDK Application
+
+<details><summary>${error}</summary>
+
+\`\`\`shell
+${output}
+\`\`\`
+
+</details>`)
+      );
+      break;
     case "plan-only":
+      if (!input.stackName) {
+        throw new Error(
+          `Stack name must be provided when running in 'plan-only' mode`
+        );
+      }
       await execute(
         `cdktf plan ${input.stackName}`,
         (output, runUrl) =>
@@ -152,6 +176,11 @@ ${output}
       );
       break;
     case "auto-approve-apply":
+      if (!input.stackName) {
+        throw new Error(
+          `Stack name must be provided when running in 'auto-approve-apply' mode`
+        );
+      }
       await execute(
         `cdktf apply ${input.stackName} --auto-approve`,
         (output, runUrl) =>

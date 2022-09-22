@@ -6,13 +6,13 @@ const {
 const inputs = {
   cdktfVersion: {
     description: "The version of cdktf CLI to use",
-    default: "0.11.1",
+    default: "0.12.2",
     required: false,
     type: "string",
   },
   terraformVersion: {
     description: "The version of terraform to use",
-    default: "1.2.2",
+    default: "1.3.0",
     required: false,
     type: "string",
   },
@@ -23,12 +23,14 @@ const inputs = {
     type: "string",
   },
   stackName: {
-    description: "The stack to run / plan",
-    required: true,
+    description:
+      "The stack to run / plan, only required when the mode is plan 'plan-only' or 'plan-and-apply'",
+    required: false,
     type: "string",
   },
   mode: {
-    description: "What action to take: 'plan-only', 'plan-and-apply'",
+    description:
+      "What action to take: 'synth-only', 'plan-only', 'plan-and-apply'",
     required: true,
     type: "string",
   },
