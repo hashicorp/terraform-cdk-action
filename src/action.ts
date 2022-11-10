@@ -62,6 +62,12 @@ function getRunUrl(output: string): string | undefined {
   return runUrl.substring(urlStart);
 }
 
+enum ExecutionMode {
+  SynthOnly = "synth-only",
+  PlanOnly = "plan-only",
+  AutoApproveApply = "auto-approve-apply",
+}
+
 async function execute(
   cdktfCommand: string,
   reportSuccess: (output: string, runUrl?: string) => Promise<void>,
@@ -118,7 +124,7 @@ export async function run(): Promise<void> {
 
   core.debug(`Running action in '${input.mode}' mode`);
   switch (input.mode) {
-    case "synth-only":
+    case ExecutionMode.SynthOnly:
       await execute(
         `cdktf synth`,
         () =>
@@ -137,7 +143,8 @@ ${output}
 </details>`)
       );
       break;
-    case "plan-only":
+
+    case ExecutionMode.PlanOnly:
       if (!input.stackName) {
         throw new Error(
           `Stack name must be provided when running in 'plan-only' mode`
@@ -175,7 +182,8 @@ ${output}
 </details>`)
       );
       break;
-    case "auto-approve-apply":
+
+    case ExecutionMode.AutoApproveApply:
       if (!input.stackName) {
         throw new Error(
           `Stack name must be provided when running in 'auto-approve-apply' mode`
@@ -211,9 +219,10 @@ ${output}
 </details>`)
       );
       break;
+
     default:
       throw new Error(
-        `Invalid mode passed: '${input.mode}', needs to be 'plan-only' or 'auto-approve-apply'`
+        `Invalid mode passed: '${input.mode}', needs to be one of '${ExecutionMode.SynthOnly}', '${ExecutionMode.PlanOnly}', '${ExecutionMode.AutoApproveApply}'`
       );
   }
 }
