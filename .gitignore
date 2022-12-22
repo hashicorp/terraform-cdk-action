@@ -4,6 +4,7 @@
 !/.projen/deps.json
 !/.projen/files.json
 !/.github/workflows/pull-request-lint.yml
+!/.github/workflows/stale.yml
 !/package.json
 !/.npmignore
 logs
@@ -48,4 +49,5 @@ junit.xml
 !/dist/
 !/action.yml
 !/LICENSE
+!/.github/workflows/lock.yml
 !/src/inputs.ts
