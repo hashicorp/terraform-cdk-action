@@ -1,7 +1,9 @@
-const { TextFile } = require("projen");
-const {
+import { TextFile } from "projen";
+import {
   GitHubActionTypeScriptProject,
-} = require("projen-github-action-typescript");
+  RunsUsing,
+} from "projen-github-action-typescript";
+import { CustomizedLicense } from "./projenrc/customized-license";
 
 const inputs = {
   cdktfVersion: {
@@ -61,6 +63,8 @@ const project = new GitHubActionTypeScriptProject({
     workflows: true,
   },
   prettier: true,
+  projenrcTs: true,
+  licensed: false, // we do supply our own license file with a custom header
 
   actionMetadata: {
     author: "HashiCorp, Inc.",
@@ -72,6 +76,10 @@ const project = new GitHubActionTypeScriptProject({
       (acc, [key, value]) => ({ ...acc, [key]: { ...value, type: undefined } }),
       {}
     ),
+    runs: {
+      using: RunsUsing.NODE_16,
+      main: "dist/index.js",
+    },
   },
 
   deps: [
@@ -90,6 +98,8 @@ const project = new GitHubActionTypeScriptProject({
   // packageName: undefined,  /* The "name" in package.json. */
 });
 
+new CustomizedLicense(project);
+
 new TextFile(project, "src/inputs.ts", {
   committed: true,
   marker: true,
@@ -107,6 +117,6 @@ new TextFile(project, "src/inputs.ts", {
     "",
   ],
 });
-project.prettier.addIgnorePattern("src/inputs.ts");
+project.prettier?.addIgnorePattern("src/inputs.ts");
 
 project.synth();
