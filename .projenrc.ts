@@ -4,6 +4,7 @@ import {
   RunsUsing,
 } from "projen-github-action-typescript";
 import { CustomizedLicense } from "./projenrc/customized-license";
+import { LockIssues } from "./projenrc/lock-issues";
 
 const inputs = {
   cdktfVersion: {
@@ -65,6 +66,38 @@ const project = new GitHubActionTypeScriptProject({
   prettier: true,
   projenrcTs: true,
   licensed: false, // we do supply our own license file with a custom header
+  depsUpgradeOptions: {
+    workflowOptions: {
+      labels: ["automerge", "dependencies"],
+    },
+  },
+  workflowGitIdentity: {
+    name: "team-tf-cdk",
+    email: "github-team-tf-cdk@hashicorp.com",
+  },
+  stale: true,
+  staleOptions: {
+    issues: {
+      staleLabel: "stale",
+      daysBeforeStale: 30,
+      staleMessage:
+        "Hi there! 👋 We haven't heard from you in 30 days and would like to know if the problem has been resolved or if " +
+        "you still need help. If we don't hear from you before then, I'll auto-close this issue in 30 days.",
+      daysBeforeClose: 30,
+      closeMessage:
+        "I'm closing this issue because we haven't heard back in 60 days. ⌛️ If you still need help, feel free to reopen the issue!",
+    },
+    pullRequest: {
+      staleLabel: "stale",
+      daysBeforeStale: 60,
+      staleMessage:
+        "Hi there! 👋 We haven't heard from you in 60 days and would like to know if you're still working on this or need help. " +
+        "If we don't hear from you before then, I'll auto-close this PR in 30 days.",
+      daysBeforeClose: 30,
+      closeMessage:
+        "I'm closing this pull request because we haven't heard back in 90 days. ⌛️ If you're still working on this, feel free to reopen the PR or create a new one!",
+    },
+  },
 
   actionMetadata: {
     author: "HashiCorp, Inc.",
@@ -99,6 +132,7 @@ const project = new GitHubActionTypeScriptProject({
 });
 
 new CustomizedLicense(project);
+new LockIssues(project);
 
 new TextFile(project, "src/inputs.ts", {
   committed: true,
