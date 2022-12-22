@@ -1,7 +1,7 @@
 import { IResolver, License } from "projen";
 import { TypeScriptProject } from "projen/lib/typescript";
 
-const SPDX = "Apache-2.0";
+const SPDX = "MPL-2.0";
 
 export class CustomizedLicense extends License {
   constructor(project: TypeScriptProject) {
