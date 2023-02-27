@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 // Heavily inspired by https://github.com/hashicorp/setup-terraform/blob/main/lib/setup-terraform.js
 // Removed the credentials and wrapper part, we don't need them we solve it through CDKTF directly
 
