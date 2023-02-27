@@ -66,12 +66,13 @@ enum ExecutionMode {
   SynthOnly = "synth-only",
   PlanOnly = "plan-only",
   AutoApproveApply = "auto-approve-apply",
+  AutoApproveDestroy = "auto-approve-destroy",
 }
 
 async function execute(
   cdktfCommand: string,
-  reportSuccess: (output: string, runUrl?: string) => Promise<void>,
-  reportFailure: (
+  reportSuccess?: (output: string, runUrl?: string) => Promise<void>,
+  reportFailure?: (
     error: Error,
     output: string,
     runUrl?: string
@@ -109,11 +110,12 @@ async function execute(
     });
   } catch (error) {
     core.debug(`Output: ${output}`);
-    await reportFailure(error as Error, output, getRunUrl(output));
+    if (reportFailure)
+      await reportFailure(error as Error, output, getRunUrl(output));
     throw error;
   }
 
-  await reportSuccess(output, getRunUrl(output));
+  if (reportSuccess) await reportSuccess(output, getRunUrl(output));
   core.debug(`Finished executing`);
 }
 
@@ -218,6 +220,15 @@ ${output}
 
 </details>`)
       );
+      break;
+
+    case ExecutionMode.AutoApproveDestroy:
+      if (!input.stackName) {
+        throw new Error(
+          `Stack name must be provided when running in 'auto-approve-destroy' mode`
+        );
+      }
+      await execute(`cdktf destroy ${input.stackName} --auto-approve`);
       break;
 
     default:
