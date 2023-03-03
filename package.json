@@ -26,7 +26,7 @@
     "@types/node": "^14",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
-    "@vercel/ncc": "^0.36.0",
+    "@vercel/ncc": "^0.36.1",
     "eslint": "^8",
     "eslint-config-prettier": "^8.6.0",
     "eslint-import-resolver-node": "^0.3.7",
@@ -35,15 +35,14 @@
     "eslint-plugin-prettier": "^4.2.1",
     "jest": "^27",
     "jest-junit": "^13",
-    "json-schema": "^0.4.0",
     "npm-check-updates": "^16",
-    "prettier": "^2.8.3",
-    "projen": "^0.67.12",
-    "projen-github-action-typescript": "^0.0.209",
+    "prettier": "^2.8.4",
+    "projen": "^0.67.71",
+    "projen-github-action-typescript": "^0.0.246",
     "standard-version": "^9",
     "ts-jest": "^27",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.5"
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
