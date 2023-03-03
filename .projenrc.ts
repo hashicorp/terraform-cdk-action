@@ -143,7 +143,12 @@ new TextFile(project, "src/inputs.ts", {
   committed: true,
   marker: true,
   lines: [
-    `import * as core from "@actions/core";`,
+    `/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+import * as core from "@actions/core";`,
     "",
     Object.entries(inputs)
       .map(

@@ -11,5 +11,6 @@ project {
     # "vendors/**",
     # "**autogen**",
     "**/node_modules/**",
+    "action.yml"
   ]
 }
