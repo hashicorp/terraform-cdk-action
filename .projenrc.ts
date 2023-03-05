@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 import { TextFile } from "projen";
 import {
   GitHubActionTypeScriptProject,
@@ -138,7 +143,12 @@ new TextFile(project, "src/inputs.ts", {
   committed: true,
   marker: true,
   lines: [
-    `import * as core from "@actions/core";`,
+    `/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
+import * as core from "@actions/core";`,
     "",
     Object.entries(inputs)
       .map(
@@ -152,5 +162,15 @@ new TextFile(project, "src/inputs.ts", {
   ],
 });
 project.prettier?.addIgnorePattern("src/inputs.ts");
+
+// Add copywrite headers to all files
+project.buildWorkflow?.addPostBuildSteps(
+  {
+    name: "Setup Copywrite tool",
+    uses: "hashicorp/setup-copywrite@3ace06ad72e6ec679ea8572457b17dbc3960b8ce", // v1.0.0
+    with: { token: "${{ secrets.GITHUB_TOKEN }}" },
+  },
+  { name: "Add headers using Copywrite tool", run: "copywrite headers" }
+);
 
 project.synth();
