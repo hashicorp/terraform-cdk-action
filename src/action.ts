@@ -71,8 +71,8 @@ enum ExecutionMode {
 
 async function execute(
   cdktfCommand: string,
-  reportSuccess?: (output: string, runUrl?: string) => Promise<void>,
-  reportFailure?: (
+  reportSuccess: (output: string, runUrl?: string) => Promise<void>,
+  reportFailure: (
     error: Error,
     output: string,
     runUrl?: string
@@ -110,12 +110,11 @@ async function execute(
     });
   } catch (error) {
     core.debug(`Output: ${output}`);
-    if (reportFailure)
-      await reportFailure(error as Error, output, getRunUrl(output));
+    await reportFailure(error as Error, output, getRunUrl(output));
     throw error;
   }
 
-  if (reportSuccess) await reportSuccess(output, getRunUrl(output));
+  await reportSuccess(output, getRunUrl(output));
   core.debug(`Finished executing`);
 }
 
@@ -228,7 +227,23 @@ ${output}
           `Stack name must be provided when running in 'auto-approve-destroy' mode`
         );
       }
-      await execute(`cdktf destroy ${input.stackName} --auto-approve`);
+      await execute(
+        `cdktf destroy ${input.stackName} --auto-approve`,
+        () =>
+          postCommentOnPr(
+            `✅ Successfully destroyed the Terraform CDK Application`
+          ),
+        (error, output) =>
+          postCommentOnPr(`### ❌ Error destroying the Terraform CDK Application
+
+<details><summary>${error}</summary>
+
+\`\`\`shell
+${output}
+\`\`\`
+
+</details>`)
+      );
       break;
 
     default:
