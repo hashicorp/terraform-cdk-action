@@ -71,6 +71,7 @@ enum ExecutionMode {
   SynthOnly = "synth-only",
   PlanOnly = "plan-only",
   AutoApproveApply = "auto-approve-apply",
+  AutoApproveDestroy = "auto-approve-destroy",
 }
 
 async function execute(
@@ -215,6 +216,31 @@ ${output}
           }'
 
           ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
+<details><summary>${error}</summary>
+
+\`\`\`shell
+${output}
+\`\`\`
+
+</details>`)
+      );
+      break;
+
+    case ExecutionMode.AutoApproveDestroy:
+      if (!input.stackName) {
+        throw new Error(
+          `Stack name must be provided when running in 'auto-approve-destroy' mode`
+        );
+      }
+      await execute(
+        `cdktf destroy ${input.stackName} --auto-approve`,
+        () =>
+          postCommentOnPr(
+            `✅ Successfully destroyed the Terraform CDK Application`
+          ),
+        (error, output) =>
+          postCommentOnPr(`### ❌ Error destroying the Terraform CDK Application
+
 <details><summary>${error}</summary>
 
 \`\`\`shell
