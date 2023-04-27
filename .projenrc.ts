@@ -58,6 +58,13 @@ const inputs = {
     required: false,
     type: "boolean",
   },
+  updateComment: {
+    description:
+      "Whether to update comment on the PR rather than adding comment",
+    default: "true",
+    required: false,
+    type: "boolean",
+  },
 };
 
 const project = new GitHubActionTypeScriptProject({

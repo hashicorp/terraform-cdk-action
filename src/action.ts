@@ -7,52 +7,10 @@ import * as core from "@actions/core";
 import { exec } from "@actions/exec";
 import * as github from "@actions/github";
 
+import { CommentController } from "./comment";
 import * as input from "./inputs";
+import { Inputs } from "./models";
 import { setupTerraform } from "./setup-terraform";
-
-async function postCommentOnPr(message: string): Promise<void> {
-  let pull_number = github.context.payload.pull_request?.number;
-  if (!input.commentOnPr) {
-    core.debug(`Not commenting on PR by configuration`);
-    return;
-  }
-
-  const octokit = github.getOctokit(input.githubToken);
-  if (!pull_number) {
-    core.debug(
-      `Not running on a PR, looking for a pull request number via search`
-    );
-
-    if (!github.context.payload.repository?.full_name) {
-      core.debug(`Could not identify repository name, skipping comment on PR`);
-    }
-
-    const q = `is:pr repo:${github.context.payload.repository?.full_name} sha:${github.context.sha}`;
-    const result = await octokit.rest.search.issuesAndPullRequests({
-      q,
-    });
-
-    core.debug(
-      `Searched for '${q}', got ${JSON.stringify(result.data, null, 2)}`
-    );
-
-    if (result.data.items.length) {
-      pull_number = result.data.items[0].number;
-    }
-  }
-
-  if (!pull_number) {
-    core.debug(`Not commenting on PR since it could not be identified`);
-    return;
-  }
-
-  await octokit.rest.issues.createComment({
-    ...github.context.repo,
-    issue_number: pull_number,
-    body: message,
-  });
-}
-
 function getRunUrl(output: string): string | undefined {
   const runUrlIdentifier = "Created speculative Terraform Cloud run:";
   const runUrl = output
@@ -76,6 +34,7 @@ enum ExecutionMode {
 
 async function execute(
   cdktfCommand: string,
+  inputs: Inputs,
   reportSuccess: (output: string, runUrl?: string) => Promise<void>,
   reportFailure: (
     error: Error,
@@ -84,21 +43,21 @@ async function execute(
   ) => Promise<void>
 ): Promise<void> {
   core.debug(`Installing terraform`);
-  await setupTerraform(input.terraformVersion);
+  await setupTerraform(inputs.terraformVersion);
 
   core.debug(`Installing CDKTF`);
-  await exec(`npm install -g cdktf-cli@${input.cdktfVersion}`);
+  await exec(`npm install -g cdktf-cli@${inputs.cdktfVersion}`);
 
   core.debug(`Executing: ${cdktfCommand}`);
   let output = "";
   try {
     await exec(cdktfCommand, [], {
-      cwd: input.workingDirectory || process.cwd(),
+      cwd: inputs.workingDirectory || process.cwd(),
       env: {
         ...process.env,
         FORCE_COLOR: "0", // disable chalk terminal colors
         TF_CLI_ARGS: "-no-color", // disable terraform colors
-        TERRAFORM_CLOUD_TOKEN: input.terraformCloudToken, // set the terraform cloud token if present
+        TERRAFORM_CLOUD_TOKEN: inputs.terraformCloudToken, // set the terraform cloud token if present
       },
       listeners: {
         stderr: (data) => {
@@ -124,21 +83,40 @@ async function execute(
 }
 
 export async function run(): Promise<void> {
+  const inputs: Inputs = {
+    cdktfVersion: input.cdktfVersion,
+    terraformVersion: input.terraformVersion,
+    workingDirectory: input.workingDirectory,
+    stackName: input.stackName,
+    mode: input.mode,
+    terraformCloudToken: input.terraformCloudToken,
+    githubToken: input.githubToken,
+    commentOnPr: input.commentOnPr,
+    updateComment: input.updateComment,
+  };
+  const octokit = github.getOctokit(inputs.githubToken);
+  const commentController = new CommentController({
+    inputs,
+    octokit,
+    context: github.context,
+  });
   core.debug(
     `Starting action with context: ${JSON.stringify(github.context, null, 2)}`
   );
 
-  core.debug(`Running action in '${input.mode}' mode`);
-  switch (input.mode) {
+  core.debug(`Running action in '${inputs.mode}' mode`);
+  switch (inputs.mode) {
     case ExecutionMode.SynthOnly:
       await execute(
         `cdktf synth`,
+        inputs,
         () =>
-          postCommentOnPr(
+          commentController.postCommentOnPr(
             `✅ Successfully synthesized the Terraform CDK Application`
           ),
         (error, output) =>
-          postCommentOnPr(`### ❌ Error synthesizing the Terraform CDK Application
+          commentController.postCommentOnPr(
+            `### ❌ Error synthesizing the Terraform CDK Application
 
 <details><summary>${error}</summary>
 
@@ -146,22 +124,25 @@ export async function run(): Promise<void> {
 ${output}
 \`\`\`
 
-</details>`)
+</details>`
+          )
       );
       break;
 
     case ExecutionMode.PlanOnly:
-      if (!input.stackName) {
+      if (!inputs.stackName) {
         throw new Error(
           `Stack name must be provided when running in 'plan-only' mode`
         );
       }
       await execute(
-        `cdktf plan ${input.stackName}`,
+        `cdktf plan ${inputs.stackName}`,
+        inputs,
         (output, runUrl) =>
-          postCommentOnPr(`### ✅ Successfully planned Terraform CDK Stack '${
-            input.stackName
-          }'
+          commentController.postCommentOnPr(
+            `### ✅ Successfully planned Terraform CDK Stack '${
+              inputs.stackName
+            }'
           
 ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
 
@@ -171,11 +152,11 @@ ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
 ${output}
 \`\`\`
 
-</details>`),
+</details>`
+          ),
         (error, output, runUrl) =>
-          postCommentOnPr(`### ❌ Error planning Terraform CDK Stack '${
-            input.stackName
-          }'
+          commentController.postCommentOnPr(
+            `### ❌ Error planning Terraform CDK Stack '${inputs.stackName}'
 
 ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
 
@@ -185,22 +166,25 @@ ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
 ${output}
 \`\`\`
 
-</details>`)
+</details>`
+          )
       );
       break;
 
     case ExecutionMode.AutoApproveApply:
-      if (!input.stackName) {
+      if (!inputs.stackName) {
         throw new Error(
           `Stack name must be provided when running in 'auto-approve-apply' mode`
         );
       }
       await execute(
-        `cdktf apply ${input.stackName} --auto-approve`,
+        `cdktf apply ${inputs.stackName} --auto-approve`,
+        inputs,
         (output, runUrl) =>
-          postCommentOnPr(`### ✅ Successfully applied Terraform CDK Stack '${
-            input.stackName
-          }'
+          commentController.postCommentOnPr(
+            `### ✅ Successfully applied Terraform CDK Stack '${
+              inputs.stackName
+            }'
 
 ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
 <details><summary>Show Run</summary>
@@ -209,11 +193,11 @@ ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
 ${output}
 \`\`\`
 
-</details>`),
+</details>`
+          ),
         (error, output, runUrl) =>
-          postCommentOnPr(`### ❌ Error applying Terraform CDK Stack '${
-            input.stackName
-          }'
+          commentController.postCommentOnPr(
+            `### ❌ Error applying Terraform CDK Stack '${inputs.stackName}'
 
           ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
 <details><summary>${error}</summary>
@@ -222,24 +206,27 @@ ${output}
 ${output}
 \`\`\`
 
-</details>`)
+</details>`
+          )
       );
       break;
 
     case ExecutionMode.AutoApproveDestroy:
-      if (!input.stackName) {
+      if (!inputs.stackName) {
         throw new Error(
           `Stack name must be provided when running in 'auto-approve-destroy' mode`
         );
       }
       await execute(
-        `cdktf destroy ${input.stackName} --auto-approve`,
+        `cdktf destroy ${inputs.stackName} --auto-approve`,
+        inputs,
         () =>
-          postCommentOnPr(
+          commentController.postCommentOnPr(
             `✅ Successfully destroyed the Terraform CDK Application`
           ),
         (error, output) =>
-          postCommentOnPr(`### ❌ Error destroying the Terraform CDK Application
+          commentController.postCommentOnPr(
+            `### ❌ Error destroying the Terraform CDK Application
 
 <details><summary>${error}</summary>
 
@@ -247,13 +234,14 @@ ${output}
 ${output}
 \`\`\`
 
-</details>`)
+</details>`
+          )
       );
       break;
 
     default:
       throw new Error(
-        `Invalid mode passed: '${input.mode}', needs to be one of '${ExecutionMode.SynthOnly}', '${ExecutionMode.PlanOnly}', '${ExecutionMode.AutoApproveApply}'`
+        `Invalid mode passed: '${inputs.mode}', needs to be one of '${ExecutionMode.SynthOnly}', '${ExecutionMode.PlanOnly}', '${ExecutionMode.AutoApproveApply}'`
       );
   }
 }

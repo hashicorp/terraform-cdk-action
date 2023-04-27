@@ -13,3 +13,4 @@ export const mode: string = core.getInput("mode");
 export const terraformCloudToken: string = core.getInput("terraformCloudToken");
 export const githubToken: string = core.getInput("githubToken");
 export const commentOnPr: boolean = core.getBooleanInput("commentOnPr");
+export const updateComment: boolean = core.getBooleanInput("updateComment");
