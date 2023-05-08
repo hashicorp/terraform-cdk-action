@@ -16,6 +16,7 @@ These are the configuration options for the action:
 | terraformCloudToken | string                                                                        | The terraform cloud / terraform enterprise token to use                                                                                                                                                               | <optional>  |
 | githubToken         | string                                                                        | The github token to use                                                                                                                                                                                               | <optional>  |
 | commentOnPr         | boolean                                                                       | Whether to comment the plan / the status on the PR                                                                                                                                                                    | true        |
+| updateComment       | boolean                                                                       | Whether to update the last comment on the PR                                                                                                                                                                    | true        |
 
 ## Example Configurations
 
