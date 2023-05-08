@@ -38,3 +38,7 @@ inputs:
     description: Whether to comment the plan / the status on the PR
     default: "true"
     required: false
+  updateComment:
+    description: Whether to update comment on the PR rather than adding comment
+    default: "true"
+    required: false
