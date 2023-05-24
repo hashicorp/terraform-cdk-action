@@ -11,6 +11,11 @@ import {
 import { CustomizedLicense } from "./projenrc/customized-license";
 import { LockIssues } from "./projenrc/lock-issues";
 
+const githubActionPinnedVersions = {
+  "actions/checkout": "8e5e7e5ab8b370d6c329ec480221332ada57f0ab", // v3.5.2
+  "actions/upload-artifact": "0b7f8abb1508181956e8e162db84b466c27e18ce", // v3.1.2
+};
+
 const inputs = {
   cdktfVersion: {
     description: "The version of cdktf CLI to use",
@@ -179,5 +184,10 @@ project.buildWorkflow?.addPostBuildSteps(
   },
   { name: "Add headers using Copywrite tool", run: "copywrite headers" }
 );
+
+// Use pinned versions of github actions
+Object.entries(githubActionPinnedVersions).forEach(([name, sha]) => {
+  project.github?.actions.set(name, `${name}@${sha}`);
+});
 
 project.synth();
