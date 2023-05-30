@@ -23097,9 +23097,9 @@ Body.prototype = {
 	json() {
 		var _this2 = this;
 
-		return this.text().then(function (text) {
+		return consumeBody.call(this).then(function (buffer) {
 			try {
-				return JSON.parse(text);
+				return JSON.parse(buffer.toString());
 			} catch (err) {
 				return Body.Promise.reject(new FetchError(`invalid json response body at ${_this2.url} reason: ${err.message}`, 'invalid-json'));
 			}
@@ -23113,7 +23113,7 @@ Body.prototype = {
   */
 	text() {
 		return consumeBody.call(this).then(function (buffer) {
-			return new TextDecoder().decode(buffer);
+			return buffer.toString();
 		});
 	},
 
@@ -27704,7 +27704,7 @@ class SemVer {
         version = version.version
       }
     } else if (typeof version !== 'string') {
-      throw new TypeError(`Invalid Version: ${(__nccwpck_require__(3837).inspect)(version)}`)
+      throw new TypeError(`Invalid version. Must be a string. Got type "${typeof version}".`)
     }
 
     if (version.length > MAX_LENGTH) {
