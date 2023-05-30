@@ -19,7 +19,7 @@ const githubActionPinnedVersions = {
   "amannn/action-semantic-pull-request": "v5.0.2",
   "actions/setup-node": "64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c", // v3.6.0
   "actions/stale": "1160a2240286f5da8ec72b1c0816ce2481aabf84", // v8.0.0
-  "peter-evans/create-pull-request": "2b011faafdcbc9ceb11414d64d0573f37c774b04", // v4.2.3
+  "peter-evans/create-pull-request": "284f54f989303d2699d373481a0cfa13ad5a6666", // v5.0.1
 };
 
 const inputs = {
