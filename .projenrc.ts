@@ -206,12 +206,18 @@ project.release?.addJobs({
     permissions: {},
     steps: [
       {
+        name: "Get the latest tag (version) from git",
+        id: "git_label",
+        run: 'echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT',
+      },
+      {
+        name: "Notify Slack via a custom Workflow webhook",
         uses: "slackapi/slack-github-action@v1",
         env: { SLACK_WEBHOOK_URL: "${{ secrets.SLACK_WEBHOOK_URL }}" },
         with: {
           payload: JSON.stringify({
             repository: repoName,
-            version: "${{ git describe --tags }}",
+            version: "${{ steps.git_label.outputs.version }}",
           }),
         },
       },

@@ -71,8 +71,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions: {}
     steps:
-      - uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117
+      - name: Get the latest tag (version) from git
+        id: git_label
+        run: echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
+      - name: Notify Slack via a custom Workflow webhook
+        uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
-          payload: '{"repository":"terraform-cdk-action","version":"${{ git describe --tags }}"}'
+          payload: '{"repository":"terraform-cdk-action","version":"${{ steps.git_label.outputs.version }}"}'
