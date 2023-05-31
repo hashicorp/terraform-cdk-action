@@ -19,6 +19,7 @@ const githubActionPinnedVersions = {
   "actions/setup-node": "64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c", // v3.6.0
   "actions/stale": "v4",
   "peter-evans/create-pull-request": "2b011faafdcbc9ceb11414d64d0573f37c774b04", // v4.2.3
+  "slackapi/slack-github-action": "e28cf165c92ffef168d23c5c9000cffc8a25e117", // v1.24.0
 };
 
 const inputs = {
@@ -77,9 +78,10 @@ const inputs = {
   },
 };
 
+const repoName = "terraform-cdk-action";
 const project = new GitHubActionTypeScriptProject({
   defaultReleaseBranch: "main",
-  name: "terraform-cdk-action",
+  name: repoName,
   githubOptions: {
     mergify: false,
     pullRequestLint: true,
@@ -193,6 +195,28 @@ project.buildWorkflow?.addPostBuildSteps(
 // Use pinned versions of github actions
 Object.entries(githubActionPinnedVersions).forEach(([name, sha]) => {
   project.github?.actions.set(name, `${name}@${sha}`);
+});
+
+// Add a step to notify Slack after a successful release
+// This is because we can't automate updating the Marketplace, sadly
+project.release?.addJobs({
+  release_notification: {
+    needs: ["release_github"],
+    runsOn: ["ubuntu-latest"],
+    permissions: {},
+    steps: [
+      {
+        uses: "slackapi/slack-github-action@v1",
+        env: { SLACK_WEBHOOK_URL: "${{ secrets.SLACK_WEBHOOK_URL }}" },
+        with: {
+          payload: JSON.stringify({
+            repository: repoName,
+            version: "${{ git describe --tags }}",
+          }),
+        },
+      },
+    ],
+  },
 });
 
 project.synth();
