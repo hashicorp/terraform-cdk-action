@@ -4,6 +4,7 @@
  */
 
 import { TextFile } from "projen";
+import { JobPermission } from "projen/lib/github/workflows-model";
 import {
   GitHubActionTypeScriptProject,
   RunsUsing,
@@ -201,9 +202,12 @@ Object.entries(githubActionPinnedVersions).forEach(([name, sha]) => {
 // This is because we can't automate updating the Marketplace, sadly
 project.release?.addJobs({
   release_notification: {
+    name: "Notify Slack about the release",
     needs: ["release_github"],
     runsOn: ["ubuntu-latest"],
-    permissions: {},
+    permissions: {
+      contents: JobPermission.READ,
+    },
     steps: [
       {
         name: "Get the latest tag (version) from git",
