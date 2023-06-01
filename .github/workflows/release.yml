@@ -66,3 +66,23 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF: ${{ github.ref }}
         run: errout=$(mktemp); gh release create $(cat dist/releasetag.txt) -R $GITHUB_REPOSITORY -F dist/changelog.md -t $(cat dist/releasetag.txt) --target $GITHUB_REF 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q "Release.tag_name already exists" $errout; then cat $errout; exit $exitcode; fi
+  release_notification:
+    name: Notify Slack about the release
+    needs: release_github
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: git checkout
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+        with:
+          fetch-depth: 0
+      - name: Get the latest tag (version) from git
+        id: git_label
+        run: echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
+      - name: Notify Slack via a custom Workflow webhook
+        uses: slackapi/slack-github-action@e28cf165c92ffef168d23c5c9000cffc8a25e117
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          payload: '{"repository":"terraform-cdk-action","version":"${{ steps.git_label.outputs.version }}"}'

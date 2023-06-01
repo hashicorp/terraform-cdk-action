@@ -4,6 +4,8 @@
  */
 
 import { TextFile } from "projen";
+import { JobPermission } from "projen/lib/github/workflows-model";
+import { UpgradeDependenciesSchedule } from "projen/lib/javascript";
 import {
   GitHubActionTypeScriptProject,
   RunsUsing,
@@ -21,6 +23,7 @@ const githubActionPinnedVersions = {
   "actions/setup-node": "64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c", // v3.6.0
   "actions/stale": "1160a2240286f5da8ec72b1c0816ce2481aabf84", // v8.0.0
   "peter-evans/create-pull-request": "284f54f989303d2699d373481a0cfa13ad5a6666", // v5.0.1
+  "slackapi/slack-github-action": "e28cf165c92ffef168d23c5c9000cffc8a25e117", // v1.24.0
 };
 
 const inputs = {
@@ -79,9 +82,10 @@ const inputs = {
   },
 };
 
+const repoName = "terraform-cdk-action";
 const project = new GitHubActionTypeScriptProject({
   defaultReleaseBranch: "main",
-  name: "terraform-cdk-action",
+  name: repoName,
   githubOptions: {
     mergify: false,
     pullRequestLint: true,
@@ -93,6 +97,7 @@ const project = new GitHubActionTypeScriptProject({
   depsUpgradeOptions: {
     workflowOptions: {
       labels: ["automerge", "dependencies"],
+      schedule: UpgradeDependenciesSchedule.MONTHLY,
     },
   },
   workflowGitIdentity: {
@@ -194,6 +199,44 @@ project.buildWorkflow?.addPostBuildSteps(
 // Use pinned versions of github actions
 Object.entries(githubActionPinnedVersions).forEach(([name, sha]) => {
   project.github?.actions.set(name, `${name}@${sha}`);
+});
+
+// Add a step to notify Slack after a successful release
+// This is because we can't automate updating the Marketplace, sadly
+project.release?.addJobs({
+  release_notification: {
+    name: "Notify Slack about the release",
+    needs: ["release_github"],
+    runsOn: ["ubuntu-latest"],
+    permissions: {
+      contents: JobPermission.READ,
+    },
+    steps: [
+      {
+        name: "git checkout",
+        uses: "actions/checkout@v3",
+        with: {
+          "fetch-depth": 0,
+        },
+      },
+      {
+        name: "Get the latest tag (version) from git",
+        id: "git_label",
+        run: 'echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT',
+      },
+      {
+        name: "Notify Slack via a custom Workflow webhook",
+        uses: "slackapi/slack-github-action@v1",
+        env: { SLACK_WEBHOOK_URL: "${{ secrets.SLACK_WEBHOOK_URL }}" },
+        with: {
+          payload: JSON.stringify({
+            repository: repoName,
+            version: "${{ steps.git_label.outputs.version }}",
+          }),
+        },
+      },
+    ],
+  },
 });
 
 project.synth();
