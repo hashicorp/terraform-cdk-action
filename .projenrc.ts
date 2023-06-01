@@ -210,6 +210,10 @@ project.release?.addJobs({
     },
     steps: [
       {
+        name: "git checkout",
+        uses: "actions/checkout@v3",
+      },
+      {
         name: "Get the latest tag (version) from git",
         id: "git_label",
         run: 'echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT',

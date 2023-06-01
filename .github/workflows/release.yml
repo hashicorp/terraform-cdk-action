@@ -73,6 +73,8 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: git checkout
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
       - name: Get the latest tag (version) from git
         id: git_label
         run: echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
