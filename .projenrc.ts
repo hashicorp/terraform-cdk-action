@@ -16,11 +16,13 @@ import { LockIssues } from "./projenrc/lock-issues";
 const githubActionPinnedVersions = {
   "actions/checkout": "8e5e7e5ab8b370d6c329ec480221332ada57f0ab", // v3.5.2
   "actions/upload-artifact": "0b7f8abb1508181956e8e162db84b466c27e18ce", // v3.1.2
+  "actions/download-artifact": "9bc31d5ccc31df68ecc42ccf4149144866c47d8a", // v3.0.2
   "dessant/lock-threads": "c1b35aecc5cdb1a34539d14196df55838bb2f836", // v4.0.0
-  "amannn/action-semantic-pull-request": "v5.0.2",
+  "amannn/action-semantic-pull-request":
+    "c3cd5d1ea3580753008872425915e343e351ab54", // v5.2.0
   "actions/setup-node": "64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c", // v3.6.0
-  "actions/stale": "v4",
-  "peter-evans/create-pull-request": "2b011faafdcbc9ceb11414d64d0573f37c774b04", // v4.2.3
+  "actions/stale": "1160a2240286f5da8ec72b1c0816ce2481aabf84", // v8.0.0
+  "peter-evans/create-pull-request": "284f54f989303d2699d373481a0cfa13ad5a6666", // v5.0.1
   "slackapi/slack-github-action": "e28cf165c92ffef168d23c5c9000cffc8a25e117", // v1.24.0
 };
 
@@ -189,8 +191,7 @@ project.prettier?.addIgnorePattern("src/inputs.ts");
 project.buildWorkflow?.addPostBuildSteps(
   {
     name: "Setup Copywrite tool",
-    uses: "hashicorp/setup-copywrite@3ace06ad72e6ec679ea8572457b17dbc3960b8ce", // v1.0.0
-    with: { token: "${{ secrets.GITHUB_TOKEN }}" },
+    uses: "hashicorp/setup-copywrite@867a1a2a064a0626db322392806428f7dc59cb3e", // v1.1.2
   },
   { name: "Add headers using Copywrite tool", run: "copywrite headers" }
 );
