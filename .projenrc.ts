@@ -5,6 +5,7 @@
 
 import { TextFile } from "projen";
 import { JobPermission } from "projen/lib/github/workflows-model";
+import { UpgradeDependenciesSchedule } from "projen/lib/javascript";
 import {
   GitHubActionTypeScriptProject,
   RunsUsing,
@@ -94,6 +95,7 @@ const project = new GitHubActionTypeScriptProject({
   depsUpgradeOptions: {
     workflowOptions: {
       labels: ["automerge", "dependencies"],
+      schedule: UpgradeDependenciesSchedule.MONTHLY,
     },
   },
   workflowGitIdentity: {
