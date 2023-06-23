@@ -11,6 +11,39 @@ import { CommentController } from "./comment";
 import * as input from "./inputs";
 import { Inputs } from "./models";
 import { setupTerraform } from "./setup-terraform";
+
+function hasTerraformChanges(output: string): Boolean {
+  return output.includes(
+    "No changes. Your infrastructure matches the configuration."
+  );
+}
+
+function postComment(
+  commentController: CommentController,
+  title: string,
+  runUrl: String | undefined,
+  output: string | undefined,
+  outputTitle: Error | string
+): Promise<void> {
+  return commentController.postCommentOnPr(
+    `### ${title}
+
+    ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
+    
+    ${
+      !!output
+        ? `<details><summary>${outputTitle}</summary>
+    
+    \`\`\`shell
+    ${output}
+    \`\`\`
+    
+    </details>`
+        : ""
+    }`
+  );
+}
+
 function getRunUrl(output: string): string | undefined {
   const runUrlIdentifier = "Created speculative Terraform Cloud run:";
   const runUrl = output
@@ -111,20 +144,20 @@ export async function run(): Promise<void> {
         `cdktf synth`,
         inputs,
         () =>
-          commentController.postCommentOnPr(
-            `✅ Successfully synthesized the Terraform CDK Application`
+          postComment(
+            commentController,
+            `✅ Successfully synthesized the Terraform CDK Application`,
+            undefined,
+            undefined,
+            ""
           ),
         (error, output) =>
-          commentController.postCommentOnPr(
-            `### ❌ Error synthesizing the Terraform CDK Application
-
-<details><summary>${error}</summary>
-
-\`\`\`shell
-${output}
-\`\`\`
-
-</details>`
+          postComment(
+            commentController,
+            "❌ Error synthesizing the Terraform CDK Application",
+            undefined,
+            output,
+            error
           )
       );
       break;
@@ -139,34 +172,28 @@ ${output}
         `cdktf plan ${inputs.stackName}`,
         inputs,
         (output, runUrl) =>
-          commentController.postCommentOnPr(
-            `### ✅ Successfully planned Terraform CDK Stack '${
-              inputs.stackName
-            }'
-          
-${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
-
-<details><summary>Show Plan</summary>
-
-\`\`\`shell
-${output}
-\`\`\`
-
-</details>`
-          ),
+          hasTerraformChanges(output)
+            ? postComment(
+                commentController,
+                `✅ Successfully planned Terraform CDK Stack '${inputs.stackName}'`,
+                runUrl,
+                output,
+                "Show Plan"
+              )
+            : postComment(
+                commentController,
+                `🟰 No changes in Terraform CDK Stack '${inputs.stackName}'`,
+                runUrl,
+                output,
+                "Show Plan"
+              ),
         (error, output, runUrl) =>
-          commentController.postCommentOnPr(
-            `### ❌ Error planning Terraform CDK Stack '${inputs.stackName}'
-
-${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
-
-<details><summary>${error}</summary>
-
-\`\`\`shell
-${output}
-\`\`\`
-
-</details>`
+          postComment(
+            commentController,
+            `❌ Error planning Terraform CDK Stack '${inputs.stackName}'`,
+            runUrl,
+            output,
+            error
           )
       );
       break;
@@ -181,32 +208,28 @@ ${output}
         `cdktf apply ${inputs.stackName} --auto-approve`,
         inputs,
         (output, runUrl) =>
-          commentController.postCommentOnPr(
-            `### ✅ Successfully applied Terraform CDK Stack '${
-              inputs.stackName
-            }'
-
-${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
-<details><summary>Show Run</summary>
-
-\`\`\`shell
-${output}
-\`\`\`
-
-</details>`
-          ),
+          hasTerraformChanges(output)
+            ? postComment(
+                commentController,
+                `✅ Successfully applied Terraform CDK Stack '${inputs.stackName}'`,
+                runUrl,
+                output,
+                "Show Run"
+              )
+            : postComment(
+                commentController,
+                `🟰 No changes to apply in Terraform CDK Stack '${inputs.stackName}'`,
+                runUrl,
+                output,
+                "Show Run"
+              ),
         (error, output, runUrl) =>
-          commentController.postCommentOnPr(
-            `### ❌ Error applying Terraform CDK Stack '${inputs.stackName}'
-
-          ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
-<details><summary>${error}</summary>
-
-\`\`\`shell
-${output}
-\`\`\`
-
-</details>`
+          postComment(
+            commentController,
+            `❌ Error applying Terraform CDK Stack '${inputs.stackName}'`,
+            runUrl,
+            output,
+            error
           )
       );
       break;
@@ -221,20 +244,20 @@ ${output}
         `cdktf destroy ${inputs.stackName} --auto-approve`,
         inputs,
         () =>
-          commentController.postCommentOnPr(
-            `✅ Successfully destroyed the Terraform CDK Application`
+          postComment(
+            commentController,
+            `✅ Successfully destroyed the Terraform CDK Application '${inputs.stackName}'`,
+            undefined,
+            undefined,
+            ""
           ),
         (error, output) =>
-          commentController.postCommentOnPr(
-            `### ❌ Error destroying the Terraform CDK Application
-
-<details><summary>${error}</summary>
-
-\`\`\`shell
-${output}
-\`\`\`
-
-</details>`
+          postComment(
+            commentController,
+            `❌ Error destroying the Terraform CDK Application '${inputs.stackName}'`,
+            undefined,
+            output,
+            error
           )
       );
       break;
