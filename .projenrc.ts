@@ -32,13 +32,13 @@ const githubActionPinnedVersions = {
 
 const inputs = {
   cdktfVersion: {
-    description: "The version of cdktf CLI to use",
+    description: "The version of CDKTF to use",
     default: "0.12.2",
     required: false,
     type: "string",
   },
   terraformVersion: {
-    description: "The version of terraform to use",
+    description: "The version of Terraform to use",
     default: "1.3.0",
     required: false,
     type: "string",
@@ -49,20 +49,20 @@ const inputs = {
     required: false,
     type: "string",
   },
-  stackName: {
-    description:
-      "The stack to run / plan, only required when the mode is plan 'plan-only' or 'plan-and-apply'",
-    required: false,
-    type: "string",
-  },
   mode: {
     description:
-      "What action to take: 'synth-only', 'plan-only', 'plan-and-apply'",
+      "What action to take: `synth-only` runs only the synthesis, `plan-only` only runs a plan, `auto-approve-apply` runs a plan and then performs an apply, `auto-approve-destroy` runs a plan and then performs a destroy",
     required: true,
     type: "string",
   },
+  stackName: {
+    description:
+      "The stack to run / plan, only required when the mode is `plan-only` or `plan-and-apply`",
+    required: false,
+    type: "string",
+  },
   terraformCloudToken: {
-    description: "The terraform cloud / terraform enterprise token to use",
+    description: "The Terraform Cloud / Terraform Enterprise token to use",
     required: false,
     type: "string",
   },
@@ -79,7 +79,7 @@ const inputs = {
   },
   updateComment: {
     description:
-      "Whether to update comment on the PR rather than adding comment",
+      "Whether to update the last comment on the PR rather than adding a new comment",
     default: "true",
     required: false,
     type: "boolean",
@@ -139,6 +139,8 @@ const project = new GitHubActionTypeScriptProject({
 
   actionMetadata: {
     author: "HashiCorp, Inc.",
+    description:
+      "The Terraform CDK GitHub Action allows you to run CDKTF as part of your CI/CD workflow.",
     branding: {
       color: "purple",
       icon: "terminal",
@@ -159,7 +161,11 @@ const project = new GitHubActionTypeScriptProject({
     "@actions/tool-cache",
     "@hashicorp/js-releases",
   ],
-  devDeps: ["projen-github-action-typescript@^0.0.392", "@types/fs-extra"],
+  devDeps: [
+    "projen-github-action-typescript@^0.0.392",
+    "@types/fs-extra",
+    "action-docs",
+  ],
 });
 
 new Automerge(project);
@@ -191,6 +197,8 @@ import * as core from "@actions/core";`,
   ],
 });
 project.prettier?.addIgnorePattern("src/inputs.ts");
+
+project.projectBuild.postCompileTask.exec("npx action-docs --no-banner -u");
 
 project.addPackageIgnore("scripts");
 project.addPackageIgnore("examples");
