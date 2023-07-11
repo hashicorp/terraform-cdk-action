@@ -28,19 +28,19 @@ function postComment(
   return commentController.postCommentOnPr(
     `### ${title}
 
-    ${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
-    
-    ${
-      !!output
-        ? `<details><summary>${outputTitle}</summary>
-    
-    \`\`\`shell
-    ${output}
-    \`\`\`
-    
-    </details>`
-        : ""
-    }`
+${runUrl ? `<a target="_blank" href='${runUrl}'>🌍 View run</a>` : ""}
+
+${
+  !!output
+    ? `<details><summary>${outputTitle}</summary>
+
+\`\`\`shell
+${output}
+\`\`\`
+
+</details>`
+    : ""
+}`
   );
 }
 
