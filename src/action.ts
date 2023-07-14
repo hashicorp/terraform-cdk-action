@@ -13,7 +13,7 @@ import { Inputs } from "./models";
 import { setupTerraform } from "./setup-terraform";
 
 function hasTerraformChanges(output: string): Boolean {
-  return output.includes(
+  return !output.includes(
     "No changes. Your infrastructure matches the configuration."
   );
 }
