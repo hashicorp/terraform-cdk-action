@@ -20,3 +20,8 @@ dist
 /.projenrc.js
 tsconfig.tsbuildinfo
 /.eslintrc.json
+scripts
+examples
+projenrc
+/.projenrc.ts
+.copywrite.hcl

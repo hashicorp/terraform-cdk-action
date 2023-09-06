@@ -15,12 +15,12 @@
     },
     {
       "name": "@typescript-eslint/eslint-plugin",
-      "version": "^5",
+      "version": "^6",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/parser",
-      "version": "^5",
+      "version": "^6",
       "type": "build"
     },
     {
@@ -76,6 +76,7 @@
     },
     {
       "name": "projen-github-action-typescript",
+      "version": "^0.0.392",
       "type": "build"
     },
     {
