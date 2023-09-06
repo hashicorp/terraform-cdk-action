@@ -55,12 +55,18 @@ export class UpdateGitTags {
         },
         {
           name: "Delete tags if they are already in use",
-          run: "for t in ${{ steps.get_aliases.outputs.list }}; git push origin :refs/tags/$t; done",
+          run: "for t in ${ALIAS_ARR//,/ }; git push origin :refs/tags/$t; done",
+          env: {
+            ALIAS_ARR: "${{ steps.get_aliases.outputs.csv }}",
+          },
           continueOnError: true,
         },
         {
           name: "Create the new tags",
-          run: "for t in ${{ steps.get_aliases.outputs.list }}; git tag $t ${{ github.sha }}; done",
+          run: "for t in ${ALIAS_ARR//,/ }; git tag $t ${{ github.sha }}; done",
+          env: {
+            ALIAS_ARR: "${{ steps.get_aliases.outputs.csv }}",
+          },
         },
         {
           name: "Push tags",
