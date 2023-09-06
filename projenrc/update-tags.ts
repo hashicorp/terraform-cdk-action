@@ -55,15 +55,15 @@ export class UpdateGitTags {
         },
         {
           name: "Delete tags if they are already in use",
-          run: 'for t in ${ALIAS_ARR//,/ }; do git push origin :refs/tags/"$t"; done',
+          run: 'for t in ${ALIAS_ARR//,/ }; do git push origin :refs/tags/"$t" && git tag -d "$t"; done',
           env: {
             ALIAS_ARR: "${{ steps.get_aliases.outputs.csv }}",
           },
           continueOnError: true,
         },
         {
-          name: "Pause to allow the deletion to be fully processed",
-          run: "sleep 20s",
+          name: "Pause to allow the remote deletion to be fully processed",
+          run: "sleep 10s",
         },
         {
           name: "Create the new tags",

@@ -165,11 +165,11 @@ const project = new GitHubActionTypeScriptProject({
   ],
   devDeps: [
     "projen-github-action-typescript@^0.0.392",
-    "@types/node@^16",
     "@types/fs-extra",
     "action-docs",
     "node-fetch@~2", // @TODO this can be removed once we upgrade to Node 18 and use native fetch
   ],
+  minNodeVersion: "16.14.0",
 });
 
 new Automerge(project);

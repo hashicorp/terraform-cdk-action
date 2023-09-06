@@ -64,6 +64,9 @@
     "@actions/tool-cache": "^2.0.1",
     "@hashicorp/js-releases": "^1.6.1"
   },
+  "engines": {
+    "node": ">= 16.14.0"
+  },
   "main": "lib/index.js",
   "license": "MPL-2.0",
   "version": "0.0.0",
