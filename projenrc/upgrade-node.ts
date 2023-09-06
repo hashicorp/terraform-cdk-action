@@ -86,11 +86,11 @@ export class UpgradeNode {
               title:
                 "chore!: increase Node.js version to ${{ steps.latest_version.outputs.short }}",
               body: [
-                "This PR initiates the upgrade of Node.js from `v${{ steps.current_version.outputs.short }}.x`",
-                "to `v${{ steps.latest_version.outputs.short }}.x` because the former is less than 30 days away from EOL.",
+                "This PR initiates the upgrade of Node.js from `v${{ steps.current_version.outputs.short }}.x` to `v${{ steps.latest_version.outputs.short }}.x` because the former is less than 30 days away from EOL.",
                 "Unfortunately, not everything can be automated, and the following steps need to be completed manually:",
                 " ",
-                "- [ ] Check if the `RunsUsing` value should be updated [here](https://github.com/hashicorp/terraform-cdk-action/blob/a3c5ee863d0fb3e054cc81baa13f0c88115a4d6f/.projenrc.ts#L153). Check [here](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) for supported options; note that the GitHub Actions runners don't automatically support every LTS version - sometimes they skip one.",
+                "- [ ] Check if the `RunsUsing` value should be updated [here](https://github.com/hashicorp/terraform-cdk-action/blob/a3c5ee863d0fb3e054cc81baa13f0c88115a4d6f/.projenrc.ts#L153). Check [here](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) for supported options.",
+                "    - Note that the GitHub Actions runners don't automatically support every LTS version - sometimes they skip one.",
                 "- [ ] Run `npx projen build`",
                 " ",
                 "Please checkout this PR, complete the above steps, push the changes to this branch, and then mark this PR as ready for review to complete the upgrade. Thanks!",

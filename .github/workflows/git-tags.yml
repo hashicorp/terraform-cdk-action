@@ -25,6 +25,8 @@ jobs:
           ALIAS_ARR: ${{ steps.get_aliases.outputs.csv }}
         run: for t in ${ALIAS_ARR//,/ }; do git push origin :refs/tags/"$t"; done
         continue-on-error: true
+      - name: Pause to allow the deletion to be fully processed
+        run: sleep 20s
       - name: Create the new tags
         env:
           ALIAS_ARR: ${{ steps.get_aliases.outputs.csv }}
