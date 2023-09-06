@@ -15,10 +15,12 @@ import { Automerge } from "./projenrc/automerge";
 import { CustomizedLicense } from "./projenrc/customized-license";
 import { LockIssues } from "./projenrc/lock-issues";
 import { UpdateGitTags } from "./projenrc/update-tags";
+import { UpgradeNode } from "./projenrc/upgrade-node";
 
 const githubActionPinnedVersions = {
   "actions/checkout": "c85c95e3d7251135ab7dc9ce3241c5835cc595a9", // v3.5.3
   "actions/download-artifact": "9bc31d5ccc31df68ecc42ccf4149144866c47d8a", // v3.0.2
+  "actions/github-script": "d7906e4ad0b1822421a7e6a35d5ca353c962f410", // v6.4.1
   "actions/setup-node": "5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d", // v3.8.1
   "actions/stale": "1160a2240286f5da8ec72b1c0816ce2481aabf84", // v8.0.0
   "actions/upload-artifact": "0b7f8abb1508181956e8e162db84b466c27e18ce", // v3.1.2
@@ -163,8 +165,10 @@ const project = new GitHubActionTypeScriptProject({
   ],
   devDeps: [
     "projen-github-action-typescript@^0.0.392",
+    "@types/node@^16",
     "@types/fs-extra",
     "action-docs",
+    "node-fetch@~2", // @TODO this can be removed once we upgrade to Node 18 and use native fetch
   ],
 });
 
@@ -173,6 +177,7 @@ new AutoApprove(project);
 new CustomizedLicense(project);
 new LockIssues(project);
 new UpdateGitTags(project);
+new UpgradeNode(project);
 
 new TextFile(project, "src/inputs.ts", {
   committed: true,
