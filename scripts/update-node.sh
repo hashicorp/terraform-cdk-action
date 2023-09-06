@@ -15,6 +15,7 @@ fi
 NODE_VERSION_SHORT=$(cut -d "." -f 1 <<< "$NODE_VERSION")
 
 echo "Updating main level Node.js version to $NODE_VERSION"
+yarn add -D @types/node@^$NODE_VERSION_SHORT
 sed -i 's/"@types\/node@.*",/"@types\/node@^'"$NODE_VERSION_SHORT"'",/' "$PROJECT_ROOT/.projenrc.ts"
 CI=0 npx projen
 

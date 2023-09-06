@@ -62,6 +62,10 @@ export class UpdateGitTags {
           continueOnError: true,
         },
         {
+          name: "Pause to allow the deletion to be fully processed",
+          run: "sleep 20s",
+        },
+        {
           name: "Create the new tags",
           run: 'for t in ${ALIAS_ARR//,/ }; do git tag "$t" ${{ github.sha }}; done',
           env: {
