@@ -5,6 +5,12 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - examples/**
+      - .github/ISSUE_TEMPLATE/**
+      - .github/CODEOWNERS
+      - .github/dependabot.yml
+      - .github/**/*.md
   workflow_dispatch: {}
 jobs:
   release:
@@ -17,7 +23,7 @@ jobs:
       CI: "true"
     steps:
       - name: Checkout
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
         with:
           fetch-depth: 0
       - name: Set git identity
@@ -49,7 +55,7 @@ jobs:
       contents: write
     if: needs.release.outputs.latest_commit == github.sha
     steps:
-      - uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
         with:
           node-version: 16.x
       - name: Download build artifacts
@@ -74,7 +80,7 @@ jobs:
       contents: read
     steps:
       - name: git checkout
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
         with:
           fetch-depth: 0
       - name: Get the latest tag (version) from git

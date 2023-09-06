@@ -10,22 +10,24 @@ import {
   GitHubActionTypeScriptProject,
   RunsUsing,
 } from "projen-github-action-typescript";
+import { AutoApprove } from "./projenrc/auto-approve";
+import { Automerge } from "./projenrc/automerge";
 import { CustomizedLicense } from "./projenrc/customized-license";
 import { LockIssues } from "./projenrc/lock-issues";
 import { UpdateGitTags } from "./projenrc/update-tags";
 
 const githubActionPinnedVersions = {
-  "actions/checkout": "8e5e7e5ab8b370d6c329ec480221332ada57f0ab", // v3.5.2
-  "actions/upload-artifact": "0b7f8abb1508181956e8e162db84b466c27e18ce", // v3.1.2
+  "actions/checkout": "c85c95e3d7251135ab7dc9ce3241c5835cc595a9", // v3.5.3
   "actions/download-artifact": "9bc31d5ccc31df68ecc42ccf4149144866c47d8a", // v3.0.2
-  "dessant/lock-threads": "c1b35aecc5cdb1a34539d14196df55838bb2f836", // v4.0.0
+  "actions/setup-node": "5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d", // v3.8.1
+  "actions/stale": "1160a2240286f5da8ec72b1c0816ce2481aabf84", // v8.0.0
+  "actions/upload-artifact": "0b7f8abb1508181956e8e162db84b466c27e18ce", // v3.1.2
   "amannn/action-semantic-pull-request":
     "c3cd5d1ea3580753008872425915e343e351ab54", // v5.2.0
-  "actions/setup-node": "64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c", // v3.6.0
-  "actions/stale": "1160a2240286f5da8ec72b1c0816ce2481aabf84", // v8.0.0
+  "dessant/lock-threads": "be8aa5be94131386884a6da4189effda9b14aa21", // v4.0.1
   "peter-evans/create-pull-request": "284f54f989303d2699d373481a0cfa13ad5a6666", // v5.0.1
-  "slackapi/slack-github-action": "e28cf165c92ffef168d23c5c9000cffc8a25e117", // v1.24.0
   "pr-mpt/actions-semver-aliases": "01b2241f545f14efe72edaa2fcec49705dbe910d", // v2.0.0
+  "slackapi/slack-github-action": "e28cf165c92ffef168d23c5c9000cffc8a25e117", // v1.24.0
 };
 
 const inputs = {
@@ -86,16 +88,19 @@ const inputs = {
 
 const repoName = "terraform-cdk-action";
 const project = new GitHubActionTypeScriptProject({
-  defaultReleaseBranch: "main",
   name: repoName,
-  githubOptions: {
-    mergify: false,
-    pullRequestLint: true,
-    workflows: true,
-  },
-  prettier: true,
+  description:
+    "The Terraform CDK GitHub Action allows you to run CDKTF as part of your CI/CD workflow.",
+  repository: `https://github.com/hashicorp/${repoName}.git`,
+  authorName: "HashiCorp",
+  authorUrl: "https://hashicorp.com",
+  authorOrganization: true,
+  defaultReleaseBranch: "main",
   projenrcTs: true,
-  licensed: false, // we do supply our own license file with a custom header
+  prettier: true,
+  licensed: false,
+  pullRequestTemplate: false,
+  mergify: false,
   depsUpgradeOptions: {
     workflowOptions: {
       labels: ["automerge", "dependencies"],
@@ -109,6 +114,7 @@ const project = new GitHubActionTypeScriptProject({
   stale: true,
   staleOptions: {
     issues: {
+      exemptLabels: ["backlog", "help wanted"],
       staleLabel: "stale",
       daysBeforeStale: 30,
       staleMessage:
@@ -119,6 +125,7 @@ const project = new GitHubActionTypeScriptProject({
         "I'm closing this issue because we haven't heard back in 60 days. ⌛️ If you still need help, feel free to reopen the issue!",
     },
     pullRequest: {
+      exemptLabels: ["backlog", "help wanted"],
       staleLabel: "stale",
       daysBeforeStale: 60,
       staleMessage:
@@ -152,16 +159,11 @@ const project = new GitHubActionTypeScriptProject({
     "@actions/tool-cache",
     "@hashicorp/js-releases",
   ],
-  devDeps: [
-    "projen-github-action-typescript",
-    "@types/node",
-    "@types/fs-extra",
-  ],
-
-  // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
-  // packageName: undefined,  /* The "name" in package.json. */
+  devDeps: ["projen-github-action-typescript@^0.0.392", "@types/fs-extra"],
 });
 
+new Automerge(project);
+new AutoApprove(project);
 new CustomizedLicense(project);
 new LockIssues(project);
 new UpdateGitTags(project);
@@ -190,6 +192,12 @@ import * as core from "@actions/core";`,
 });
 project.prettier?.addIgnorePattern("src/inputs.ts");
 
+project.addPackageIgnore("scripts");
+project.addPackageIgnore("examples");
+project.addPackageIgnore("projenrc");
+project.addPackageIgnore("/.projenrc.ts");
+
+project.addPackageIgnore(".copywrite.hcl");
 // Add copywrite headers to all files
 project.buildWorkflow?.addPostBuildSteps(
   {
@@ -240,6 +248,21 @@ project.release?.addJobs({
       },
     ],
   },
+});
+
+const releaseWorkflow = project.tryFindObjectFile(
+  ".github/workflows/release.yml"
+);
+releaseWorkflow?.addOverride("on.push", {
+  branches: ["main"],
+  "paths-ignore": [
+    // don't do a release if the change was only to these files/directories
+    "examples/**",
+    ".github/ISSUE_TEMPLATE/**",
+    ".github/CODEOWNERS",
+    ".github/dependabot.yml",
+    ".github/**/*.md",
+  ],
 });
 
 project.synth();
