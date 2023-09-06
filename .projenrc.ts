@@ -12,6 +12,7 @@ import {
 } from "projen-github-action-typescript";
 import { CustomizedLicense } from "./projenrc/customized-license";
 import { LockIssues } from "./projenrc/lock-issues";
+import { UpdateGitTags } from "./projenrc/update-tags";
 
 const githubActionPinnedVersions = {
   "actions/checkout": "8e5e7e5ab8b370d6c329ec480221332ada57f0ab", // v3.5.2
@@ -24,6 +25,7 @@ const githubActionPinnedVersions = {
   "actions/stale": "1160a2240286f5da8ec72b1c0816ce2481aabf84", // v8.0.0
   "peter-evans/create-pull-request": "284f54f989303d2699d373481a0cfa13ad5a6666", // v5.0.1
   "slackapi/slack-github-action": "e28cf165c92ffef168d23c5c9000cffc8a25e117", // v1.24.0
+  "pr-mpt/actions-semver-aliases": "01b2241f545f14efe72edaa2fcec49705dbe910d", // v2.0.0
 };
 
 const inputs = {
@@ -162,6 +164,7 @@ const project = new GitHubActionTypeScriptProject({
 
 new CustomizedLicense(project);
 new LockIssues(project);
+new UpdateGitTags(project);
 
 new TextFile(project, "src/inputs.ts", {
   committed: true,
