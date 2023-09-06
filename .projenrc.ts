@@ -264,5 +264,10 @@ releaseWorkflow?.addOverride("on.push", {
     ".github/**/*.md",
   ],
 });
+// The below is necessary in order to allow the git-tags workflow to run
+releaseWorkflow?.addOverride(
+  "jobs.release_github.steps.3.env.GITHUB_TOKEN",
+  "${{ secrets.PROJEN_GITHUB_TOKEN }}"
+);
 
 project.synth();
