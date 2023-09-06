@@ -23,11 +23,11 @@ jobs:
       - name: Delete tags if they are already in use
         env:
           ALIAS_ARR: ${{ steps.get_aliases.outputs.csv }}
-        run: for t in ${ALIAS_ARR//,/ }; git push origin :refs/tags/$t; done
+        run: for t in ${ALIAS_ARR//,/ }; do git push origin :refs/tags/"$t"; done
         continue-on-error: true
       - name: Create the new tags
         env:
           ALIAS_ARR: ${{ steps.get_aliases.outputs.csv }}
-        run: for t in ${ALIAS_ARR//,/ }; git tag $t ${{ github.sha }}; done
+        run: for t in ${ALIAS_ARR//,/ }; do git tag "$t" ${{ github.sha }}; done
       - name: Push tags
         run: git push origin --tags
