@@ -36,12 +36,11 @@ export class UpgradeNode {
             run: "yarn install",
           },
           {
-            // NOTE: This implementation is somewhat janky because it uses @types/node as the source of truth
-            // We may want to consider setting a minNodeVersion (engines.node) instead
             name: "Get current Node.js version",
             id: "current_version",
             run: [
-              `CURRENT_VERSION=$(npm list @types/node --depth=0 --json | jq -r '.dependencies."@types/node".version')`,
+              `ENGINES_NODE_VERSION=$(npm pkg get engines.node | tr -d '"')`,
+              `CURRENT_VERSION=$(cut -d " " -f 2 <<< "$ENGINES_NODE_VERSION")`,
               `CURRENT_VERSION_SHORT=$(cut -d "." -f 1 <<< "$CURRENT_VERSION")`,
               `echo "CURRENT_NODEJS_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV`,
               `echo "CURRENT_NODEJS_VERSION_SHORT=$CURRENT_VERSION_SHORT" >> $GITHUB_ENV`,
