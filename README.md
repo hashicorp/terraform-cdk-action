@@ -1,22 +1,22 @@
 # Terraform CDK GitHub Action
 
-This is the Terraform CDK GitHub Action, it allows you to run Terraform CDK as part of your CI/CD workflow.
+The Terraform CDK GitHub Action allows you to run CDKTF as part of your CI/CD workflow.
 
-## Usage
+<!-- action-docs-inputs -->
+## Inputs
 
-These are the configuration options for the action:
-
-| **Name**            | **Type**                                                                      | **Description**                                                                                                                                                                                                       | **Default** |
-| ------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| cdktfVersion        | string                                                                        | The version of cdktf CLI to use                                                                                                                                                                                       | 0.12.2      |
-| terraformVersion    | string                                                                        | The version of terraform to use                                                                                                                                                                                       | 1.3.0       |
-| workingDirectory    | string                                                                        | The directory to use for the project                                                                                                                                                                                  | ./          |
-| stackName           | string                                                                        | The stack to run / plan, only required when the mode is plan 'plan-only' or 'plan-and-apply'                                                                                                                          | <optional>  |
-| mode                | "synth-only" \| "plan-only" \| "auto-approve-apply" \| "auto-approve-destroy" | What action to take: 'synth-only' runs only the synthesis, 'plan-only' only runs a plan, 'auto-approve-apply' runs a plan and then performs an apply, 'auto-approve-destroy' runs a plan and then performs a destroy" | <required>  |
-| terraformCloudToken | string                                                                        | The terraform cloud / terraform enterprise token to use                                                                                                                                                               | <optional>  |
-| githubToken         | string                                                                        | The github token to use                                                                                                                                                                                               | <optional>  |
-| commentOnPr         | boolean                                                                       | Whether to comment the plan / the status on the PR                                                                                                                                                                    | true        |
-| updateComment       | boolean                                                                       | Whether to update the last comment on the PR                                                                                                                                                                    | true        |
+| parameter | description | required | default |
+| --- | --- | --- | --- |
+| cdktfVersion | The version of CDKTF to use | `false` | 0.12.2 |
+| terraformVersion | The version of Terraform to use | `false` | 1.3.0 |
+| workingDirectory | The directory to use for the project | `false` | ./ |
+| mode | What action to take: `synth-only` runs only the synthesis, `plan-only` only runs a plan, `auto-approve-apply` runs a plan and then performs an apply, `auto-approve-destroy` runs a plan and then performs a destroy | `true` |  |
+| stackName | The stack to run / plan, only required when the mode is `plan-only` or `plan-and-apply` | `false` |  |
+| terraformCloudToken | The Terraform Cloud / Terraform Enterprise token to use | `false` |  |
+| githubToken | The github token to use | `false` |  |
+| commentOnPr | Whether to comment the plan / the status on the PR | `false` | true |
+| updateComment | Whether to update the last comment on the PR rather than adding a new comment | `false` | true |
+<!-- action-docs-inputs -->
 
 ## Example Configurations
 
@@ -39,9 +39,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: "16"
 
@@ -56,12 +56,12 @@ jobs:
         run: yarn test
 
       - name: Run Terraform CDK
-        uses: hashicorp/terraform-cdk-action@v0.1.0
+        uses: hashicorp/terraform-cdk-action@v0.1
         with:
-          terraformVersion: 1.3.0
-          cdktfVersion: 0.12.2
-          stackName: my-stack
+          cdktfVersion: 0.17.0
+          terraformVersion: 1.5.2
           mode: plan-only
+          stackName: my-stack
           terraformCloudToken: ${{ secrets.TF_API_TOKEN }}
           githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -87,9 +87,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: "16"
 
@@ -104,12 +104,12 @@ jobs:
         run: yarn test
 
       - name: Run Terraform CDK
-        uses: hashicorp/terraform-cdk-action@v0.1.0
+        uses: hashicorp/terraform-cdk-action@v0.1
         with:
-          terraformVersion: 1.3.0
-          cdktfVersion: 0.11.2
-          stackName: my-stack
+          cdktfVersion: 0.17.0
+          terraformVersion: 1.5.2
           mode: auto-approve-apply
+          stackName: my-stack
           terraformCloudToken: ${{ secrets.TF_API_TOKEN }}
           githubToken: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -131,9 +131,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v3
         with:
           node-version: "16"
 
@@ -148,10 +148,10 @@ jobs:
         run: yarn test
 
       - name: Test the synth
-        uses: hashicorp/terraform-cdk-action@v0.1.0
+        uses: hashicorp/terraform-cdk-action@v0.1
         with:
-          terraformVersion: 1.3.0
-          cdktfVersion: 0.12.2
-          stackName: my-stack
+          cdktfVersion: 0.17.0
+          terraformVersion: 1.5.2
           mode: synth-only
+          stackName: my-stack
 ```
