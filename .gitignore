@@ -54,4 +54,5 @@ junit.xml
 !/.github/workflows/lock.yml
 !/.github/workflows/git-tags.yml
 !/.github/workflows/upgrade-node.yml
+!/.github/workflows/upgrade-node-manually.yml
 !/src/inputs.ts
