@@ -161,7 +161,7 @@ const project = new GitHubActionTypeScriptProject({
     "@actions/exec",
     "@actions/io",
     "@actions/tool-cache",
-    "@hashicorp/js-releases",
+    "@hashicorp/js-releases@^1.7.0",
   ],
   devDeps: [
     "projen-github-action-typescript@^0.0.392",

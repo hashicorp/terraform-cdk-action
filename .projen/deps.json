@@ -127,6 +127,7 @@
     },
     {
       "name": "@hashicorp/js-releases",
+      "version": "^1.7.0",
       "type": "runtime"
     }
   ],
