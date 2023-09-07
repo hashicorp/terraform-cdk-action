@@ -38,7 +38,7 @@ jobs:
         run: |-
           TERRAFORM_VERSION_MINOR=$(cut -d "." -f 2 <<< "$NEW_TERRAFORM_VERSION")
           echo "NEW_TERRAFORM_VERSION_MINOR=$TERRAFORM_VERSION_MINOR" >> $GITHUB_ENV
-          echo "value=$TERRAFORM_VERSION" >> $GITHUB_OUTPUT
+          echo "value=$NEW_TERRAFORM_VERSION" >> $GITHUB_OUTPUT
           echo "minor=$TERRAFORM_VERSION_MINOR" >> $GITHUB_OUTPUT
       - name: Run upgrade script
         if: steps.current_version.outputs.value != steps.latest_version.outputs.value
