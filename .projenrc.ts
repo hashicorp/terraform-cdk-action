@@ -15,6 +15,7 @@ import { Automerge } from "./projenrc/automerge";
 import { CustomizedLicense } from "./projenrc/customized-license";
 import { LockIssues } from "./projenrc/lock-issues";
 import { UpdateGitTags } from "./projenrc/update-tags";
+import { UpgradeCDKTF } from "./projenrc/upgrade-cdktf";
 import { UpgradeNode } from "./projenrc/upgrade-node";
 
 const githubActionPinnedVersions = {
@@ -177,6 +178,7 @@ new AutoApprove(project);
 new CustomizedLicense(project);
 new LockIssues(project);
 new UpdateGitTags(project);
+new UpgradeCDKTF(project);
 new UpgradeNode(project);
 
 new TextFile(project, "src/inputs.ts", {
