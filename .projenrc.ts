@@ -169,7 +169,7 @@ const project = new GitHubActionTypeScriptProject({
     "action-docs",
     "node-fetch@~2", // @TODO this can be removed once we upgrade to Node 18 and use native fetch
   ],
-  minNodeVersion: "16.14.0",
+  minNodeVersion: "18.12.0",
 });
 
 new Automerge(project);
