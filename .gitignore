@@ -55,4 +55,5 @@ junit.xml
 !/.github/workflows/git-tags.yml
 !/.github/workflows/upgrade-cdktf.yml
 !/.github/workflows/upgrade-node.yml
+!/.github/workflows/upgrade-terraform.yml
 !/src/inputs.ts

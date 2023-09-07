@@ -14,6 +14,7 @@
 /.github/workflows/upgrade-cdktf.yml linguist-generated
 /.github/workflows/upgrade-main.yml linguist-generated
 /.github/workflows/upgrade-node.yml linguist-generated
+/.github/workflows/upgrade-terraform.yml linguist-generated
 /.gitignore linguist-generated
 /.npmignore linguist-generated
 /.npmrc linguist-generated

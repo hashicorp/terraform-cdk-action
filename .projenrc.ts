@@ -17,6 +17,7 @@ import { LockIssues } from "./projenrc/lock-issues";
 import { UpdateGitTags } from "./projenrc/update-tags";
 import { UpgradeCDKTF } from "./projenrc/upgrade-cdktf";
 import { UpgradeNode } from "./projenrc/upgrade-node";
+import { UpgradeTerraform } from "./projenrc/upgrade-terraform";
 
 const githubActionPinnedVersions = {
   "actions/checkout": "c85c95e3d7251135ab7dc9ce3241c5835cc595a9", // v3.5.3
@@ -180,6 +181,7 @@ new LockIssues(project);
 new UpdateGitTags(project);
 new UpgradeCDKTF(project);
 new UpgradeNode(project);
+new UpgradeTerraform(project);
 
 new TextFile(project, "src/inputs.ts", {
   committed: true,
