@@ -4,7 +4,7 @@
  */
 
 import { javascript } from "projen";
-import { JobPermission } from "projen/lib/github/workflows-model";
+import { JobPermission, JobStep } from "projen/lib/github/workflows-model";
 
 /**
  * Checks for new versions of CDKTF and creates a PR with an upgrade change if there are changes.
@@ -21,6 +21,20 @@ export class UpgradeCDKTF {
     });
 
     (workflow.concurrency as any) = "${{ github.workflow }}-${{ github.ref }}";
+
+    const createPRbase: JobStep = {
+      uses: "peter-evans/create-pull-request@v3",
+      with: {
+        branch: "auto/upgrade-cdktf-${{ steps.latest_version.outputs.minor }}",
+        base: "main",
+        labels: "automerge,dependencies",
+        token: "${{ secrets.PROJEN_GITHUB_TOKEN }}",
+        author: "team-tf-cdk <github-team-tf-cdk@hashicorp.com>",
+        committer: "team-tf-cdk <github-team-tf-cdk@hashicorp.com>",
+        signoff: true,
+        "delete-branch": true,
+      },
+    };
 
     workflow.addJobs({
       upgrade: {
@@ -41,9 +55,9 @@ export class UpgradeCDKTF {
             run: [
               // HACK ALERT! This will stop working once CDKTF goes 1.0+
               `OLD_VERSION=$(sed -nE 's/default: "(0\..*)",/\\1/p' .projenrc.ts | xargs)`,
-              `OLD_VERSION_SHORT=$(cut -d "." -f 2 <<< "$OLD_VERSION")`,
+              `OLD_VERSION_MINOR=$(cut -d "." -f 2 <<< "$OLD_VERSION")`,
               `echo "value=$OLD_VERSION" >> $GITHUB_OUTPUT`,
-              `echo "short=$OLD_VERSION_SHORT" >> $GITHUB_OUTPUT`,
+              `echo "minor=$OLD_VERSION_MINOR" >> $GITHUB_OUTPUT`,
             ].join("\n"),
           },
           {
@@ -51,39 +65,48 @@ export class UpgradeCDKTF {
             id: "latest_version",
             run: [
               `CDKTF_VERSION=$(yarn info cdktf --json | jq -r '.data.version')`,
-              `CDKTF_VERSION_SHORT=$(cut -d "." -f 2 <<< "$CDKTF_VERSION")`,
+              `CDKTF_VERSION_MINOR=$(cut -d "." -f 2 <<< "$CDKTF_VERSION")`,
               `echo "value=$CDKTF_VERSION" >> $GITHUB_OUTPUT`,
-              `echo "short=$CDKTF_VERSION_SHORT" >> $GITHUB_OUTPUT`,
+              `echo "minor=$CDKTF_VERSION_MINOR" >> $GITHUB_OUTPUT`,
             ].join("\n"),
             // IMPORTANT: the above behavior changed in Yarn 2+; `yarn info` instead gives the version of the installed package
             // If/when we upgrade we'll likely want to switch to `yarn npm info`: https://yarnpkg.com/cli/npm/info
           },
           {
             name: "Run upgrade script",
-            if: "steps.current_version.outputs.short < steps.latest_version.outputs.short",
+            if: "steps.current_version.outputs.value != steps.latest_version.outputs.value",
             run: "scripts/update-cdktf.sh ${{ steps.latest_version.outputs.value }}",
           },
           {
-            name: "Create pull request",
-            uses: "peter-evans/create-pull-request@v3",
+            ...createPRbase,
+            name: "Create pull request for a breaking change",
+            if: "steps.current_version.outputs.minor != steps.latest_version.outputs.minor",
             with: {
+              ...createPRbase.with,
               "commit-message":
-                "chore!: change default cdktf version to ${{ steps.latest_version.outputs.value }}",
-              branch:
-                "auto/upgrade-cdktf-${{ steps.latest_version.outputs.short }}",
-              base: "main",
+                "chore!: change default CDKTF version to ${{ steps.latest_version.outputs.value }}",
               title:
-                "chore!: change default cdktf version to ${{ steps.latest_version.outputs.value }}",
+                "chore!: change default CDKTF version to ${{ steps.latest_version.outputs.value }}",
               body: [
                 "This PR increases the default version of CDKTF used from `${{ steps.current_version.outputs.value }}` to version `${{ steps.latest_version.outputs.value }}`.",
                 "This is considered a breaking change because anyone who does not manually specify a `cdktfVersion` in their action configuration will automatically start using the new version.",
               ].join("\n"),
-              labels: "automerge,dependencies",
-              token: "${{ secrets.PROJEN_GITHUB_TOKEN }}",
-              author: "team-tf-cdk <github-team-tf-cdk@hashicorp.com>",
-              committer: "team-tf-cdk <github-team-tf-cdk@hashicorp.com>",
-              signoff: true,
-              "delete-branch": true,
+            },
+          },
+          {
+            ...createPRbase,
+            name: "Create pull request for a non-breaking change",
+            if: "steps.current_version.outputs.minor == steps.latest_version.outputs.minor",
+            with: {
+              ...createPRbase.with,
+              "commit-message":
+                "fix: change default CDKTF version to ${{ steps.latest_version.outputs.value }}",
+              title:
+                "fix: change default CDKTF version to ${{ steps.latest_version.outputs.value }}",
+              body: [
+                "This PR increases the default version of CDKTF used from `${{ steps.current_version.outputs.value }}` to version `${{ steps.latest_version.outputs.value }}`.",
+                "This is not considered a breaking change because it's just a patch release that shouldn't have any backwards incompatibilities.",
+              ].join("\n"),
             },
           },
         ],
