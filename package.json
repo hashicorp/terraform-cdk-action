@@ -33,7 +33,7 @@
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^28.1.8",
-    "@types/node": "^16",
+    "@types/node": "^18",
     "@typescript-eslint/eslint-plugin": "^6",
     "@typescript-eslint/parser": "^6",
     "@vercel/ncc": "^0.36.1",
@@ -65,7 +65,7 @@
     "@hashicorp/js-releases": "^1.6.1"
   },
   "engines": {
-    "node": ">= 16.14.0"
+    "node": ">= 18.12.0"
   },
   "main": "lib/index.js",
   "license": "MPL-2.0",
