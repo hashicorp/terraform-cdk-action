@@ -14,8 +14,10 @@ fi
 
 NODE_VERSION_SHORT=$(cut -d "." -f 1 <<< "$NODE_VERSION")
 
-echo "Updating main level Node.js version to $NODE_VERSION"
 yarn
+yarn config set ignore-engines true
+
+echo "Updating Node.js version to $NODE_VERSION"
 sed -i "s/minNodeVersion: \".*\",/minNodeVersion: \"$NODE_VERSION\",/" "$PROJECT_ROOT/.projenrc.ts"
 CI=0 npx projen
 
