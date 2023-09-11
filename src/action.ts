@@ -78,13 +78,14 @@ async function execute(
   core.debug(`Installing terraform`);
   await setupTerraform(inputs.terraformVersion);
 
-  core.debug(`Installing CDKTF`);
-  await exec(`npm install -g cdktf-cli@${inputs.cdktfVersion}`);
+  const fullCdktfCommand = inputs.customNpxArgs
+    ? `npx --yes ${inputs.customNpxArgs} cdktf-cli@${inputs.cdktfVersion} ${cdktfCommand}`
+    : `npx --yes cdktf-cli@${inputs.cdktfVersion} ${cdktfCommand}`;
 
-  core.debug(`Executing: ${cdktfCommand}`);
+  core.debug(`Executing: ${fullCdktfCommand}`);
   let output = "";
   try {
-    await exec(cdktfCommand, [], {
+    await exec(fullCdktfCommand, [], {
       cwd: inputs.workingDirectory || process.cwd(),
       env: {
         ...process.env,
@@ -126,6 +127,7 @@ export async function run(): Promise<void> {
     githubToken: input.githubToken,
     commentOnPr: input.commentOnPr,
     updateComment: input.updateComment,
+    customNpxArgs: input.customNpxArgs,
   };
   const octokit = github.getOctokit(inputs.githubToken);
   const commentController = new CommentController({
@@ -141,7 +143,7 @@ export async function run(): Promise<void> {
   switch (inputs.mode) {
     case ExecutionMode.SynthOnly:
       await execute(
-        `cdktf synth`,
+        `synth`,
         inputs,
         () =>
           postComment(
@@ -169,7 +171,7 @@ export async function run(): Promise<void> {
         );
       }
       await execute(
-        `cdktf plan ${inputs.stackName}`,
+        `plan ${inputs.stackName}`,
         inputs,
         (output, runUrl) =>
           hasTerraformChanges(output)
@@ -205,7 +207,7 @@ export async function run(): Promise<void> {
         );
       }
       await execute(
-        `cdktf apply ${inputs.stackName} --auto-approve`,
+        `apply ${inputs.stackName} --auto-approve`,
         inputs,
         (output, runUrl) =>
           hasTerraformChanges(output)
@@ -241,7 +243,7 @@ export async function run(): Promise<void> {
         );
       }
       await execute(
-        `cdktf destroy ${inputs.stackName} --auto-approve`,
+        `destroy ${inputs.stackName} --auto-approve`,
         inputs,
         () =>
           postComment(

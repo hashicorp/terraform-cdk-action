@@ -14,4 +14,5 @@ export interface Inputs {
   githubToken: string;
   commentOnPr: boolean;
   updateComment: boolean;
+  customNpxArgs: string;
 }
