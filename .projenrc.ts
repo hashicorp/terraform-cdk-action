@@ -88,6 +88,13 @@ const inputs = {
     required: false,
     type: "boolean",
   },
+  customNpxArgs: {
+    description:
+      "The additional CLI arguments to pass to npx as part of the cdktf-cli execution.",
+    default: "",
+    required: false,
+    type: "string",
+  },
 };
 
 const repoName = "terraform-cdk-action";

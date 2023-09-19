@@ -42,3 +42,7 @@ inputs:
     description: Whether to update the last comment on the PR rather than adding a new comment
     default: "true"
     required: false
+  customNpxArgs:
+    description: The additional CLI arguments to pass to npx as part of the cdktf-cli execution.
+    default: ""
+    required: false
