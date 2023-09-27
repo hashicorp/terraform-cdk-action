@@ -77,7 +77,7 @@ export class UpgradeTerraform {
             run: [
               `TERRAFORM_VERSION_MINOR=$(cut -d "." -f 2 <<< "$NEW_TERRAFORM_VERSION")`,
               `echo "NEW_TERRAFORM_VERSION_MINOR=$TERRAFORM_VERSION_MINOR" >> $GITHUB_ENV`,
-              `echo "value=$TERRAFORM_VERSION" >> $GITHUB_OUTPUT`,
+              `echo "value=$NEW_TERRAFORM_VERSION" >> $GITHUB_OUTPUT`,
               `echo "minor=$TERRAFORM_VERSION_MINOR" >> $GITHUB_OUTPUT`,
             ].join("\n"),
           },
