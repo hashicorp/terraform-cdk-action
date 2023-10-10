@@ -266,7 +266,7 @@ export async function run(): Promise<void> {
 
     default:
       throw new Error(
-        `Invalid mode passed: '${inputs.mode}', needs to be one of '${ExecutionMode.SynthOnly}', '${ExecutionMode.PlanOnly}', '${ExecutionMode.AutoApproveApply}'`
+        `Invalid mode passed: '${inputs.mode}', needs to be one of '${ExecutionMode.SynthOnly}', '${ExecutionMode.PlanOnly}', '${ExecutionMode.AutoApproveApply}', '${ExecutionMode.AutoApproveDestroy}'`
       );
   }
 }
