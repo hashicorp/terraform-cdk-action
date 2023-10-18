@@ -17,7 +17,7 @@ jobs:
       CHECKPOINT_DISABLE: "1"
     steps:
       - name: Checkout
-        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
       - name: Install
         run: yarn install
       - name: Get current Node.js version
@@ -46,7 +46,7 @@ jobs:
           echo "value=$NEW_NODEJS_VERSION" >> $GITHUB_OUTPUT
           echo "short=$NEW_NODEJS_VERSION_SHORT" >> $GITHUB_OUTPUT
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@284f54f989303d2699d373481a0cfa13ad5a6666
+        uses: peter-evans/create-pull-request@153407881ec5c347639a548ade7d8ad1d6740e38
         with:
           commit-message: "chore: increase Node.js version to ${{ steps.latest_version.outputs.value }}"
           branch: auto/upgrade-node-${{ steps.latest_version.outputs.short }}
