@@ -2026,6 +2026,11 @@ console-control-strings@^1.1.0:
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
   integrity sha512-ty/fTekppD2fIwRvnZAVdeOiGd1c7YXEixbgJTNzqcxJWKQnjJ/V1bNEEE6hygpM3WjwHFUVK6HTjWSzV4a8sQ==
 
+constructs@10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/constructs/-/constructs-10.0.0.tgz#a6d498540111f6d75663711d0fa65f32fc8f1786"
+  integrity sha512-MIwjmrXZpM9RtwyrSD4HotDIQl8HTdIefQhU+MU1asvtSyVN3kK8kjeUOWMFb+fdyT4RX3QvvcaaPBluLEX1SA==
+
 constructs@^10.0.0:
   version "10.3.0"
   resolved "https://registry.yarnpkg.com/constructs/-/constructs-10.3.0.tgz#4c246fce9cf8e77711ad45944e9fbd41f1501965"
@@ -5379,31 +5384,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen-github-action-typescript@^0.0.392:
-  version "0.0.392"
-  resolved "https://registry.yarnpkg.com/projen-github-action-typescript/-/projen-github-action-typescript-0.0.392.tgz#4fb64839b80ec285bfde9b9c5621844c69cc2b67"
-  integrity sha512-m5qLOnDGLN8hgXaVwvMuj8gAyumV4IROdF4q4Ty8i30oUbY9q6s+lKSHPi5lndnbKm7Ng+nzUeVxlewuEogt+A==
-  dependencies:
-    projen "^0.72.28"
-
-projen@^0.72.28:
-  version "0.72.31"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.72.31.tgz#05dfbd5067901725e9e09b2acfe4d4b3e8480fcd"
-  integrity sha512-MCrciIRtKvqJJjA78FlRsNVMT9w6vb9gfQgooOEs+yqdhneMDBiEX7sPYHA1FW6XEFWgK1mkSPxUdQFGbrG24w==
-  dependencies:
-    "@iarna/toml" "^2.2.5"
-    case "^1.6.3"
-    chalk "^4.1.2"
-    comment-json "4.2.2"
-    conventional-changelog-config-spec "^2.1.0"
-    fast-json-patch "^3.1.1"
-    glob "^8"
-    ini "^2.0.0"
-    semver "^7.5.4"
-    shx "^0.3.4"
-    xmlbuilder2 "^3.1.1"
-    yaml "^2.2.2"
-    yargs "^17.7.2"
+projen-github-action-typescript@^0.0.394:
+  version "0.0.394"
+  resolved "https://registry.yarnpkg.com/projen-github-action-typescript/-/projen-github-action-typescript-0.0.394.tgz#527d56fd11f93a40613cc71d53b273abeb475589"
+  integrity sha512-/4Vjkwo4V+RTEZnBl3jnclIWeHcgg/khG4JzshkB3zapgc8ZLh/jYpH8eVwsJQUYqNR+veHXyt/HytUAFVztcQ==
 
 projen@^0.76.15:
   version "0.76.15"

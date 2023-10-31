@@ -38,7 +38,7 @@
     "@typescript-eslint/parser": "^6",
     "@vercel/ncc": "^0.38.1",
     "action-docs": "^1.2.0",
-    "constructs": "^10.0.0",
+    "constructs": "10.0.0",
     "eslint": "^8",
     "eslint-config-prettier": "^8.10.0",
     "eslint-import-resolver-node": "^0.3.9",
@@ -51,11 +51,14 @@
     "npm-check-updates": "^16",
     "prettier": "^2.8.8",
     "projen": "^0.76.15",
-    "projen-github-action-typescript": "^0.0.392",
+    "projen-github-action-typescript": "^0.0.394",
     "standard-version": "^9",
     "ts-jest": "^27",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
+  },
+  "peerDependencies": {
+    "constructs": "^10.0.0"
   },
   "dependencies": {
     "@actions/core": "^1.10.1",

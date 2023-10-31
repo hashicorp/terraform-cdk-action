@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import { javascript } from "projen";
+import { typescript } from "projen";
 import { JobPermission, JobStep } from "projen/lib/github/workflows-model";
 
 /**
  * Auto-updates Node to the next LTS version a month before the previous one goes EOL
  */
 export class UpgradeNode {
-  constructor(project: javascript.NodeProject) {
+  constructor(project: typescript.TypeScriptProject) {
     const autoWorkflow = project.github?.addWorkflow("upgrade-node");
     const manualWorkflow = project.github?.addWorkflow("upgrade-node-manually");
 

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import { javascript } from "projen";
+import { typescript } from "projen";
 import { JobPermission } from "projen/lib/github/workflows-model";
 
 /**
@@ -21,7 +21,7 @@ import { JobPermission } from "projen/lib/github/workflows-model";
  *     actions/setup-node@v3
  */
 export class UpdateGitTags {
-  constructor(project: javascript.NodeProject) {
+  constructor(project: typescript.TypeScriptProject) {
     const workflow = project.github?.addWorkflow("git-tags");
 
     if (!workflow) throw new Error("no workflow defined");

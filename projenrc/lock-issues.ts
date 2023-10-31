@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import { javascript } from "projen";
+import { typescript } from "projen";
 import { JobPermission } from "projen/lib/github/workflows-model";
 
 /**
  * Automatically locks issues and PRs after 30 days.
  */
 export class LockIssues {
-  constructor(project: javascript.NodeProject) {
+  constructor(project: typescript.TypeScriptProject) {
     const workflow = project.github?.addWorkflow("lock");
 
     if (!workflow) throw new Error("no workflow defined");
