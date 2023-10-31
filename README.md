@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: actions/setup-node@v3
         with:
@@ -57,7 +57,7 @@ jobs:
         run: yarn test
 
       - name: Run Terraform CDK
-        uses: hashicorp/terraform-cdk-action@v0.1
+        uses: hashicorp/terraform-cdk-action@v0.2
         with:
           cdktfVersion: 0.17.0
           terraformVersion: 1.5.2
@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: actions/setup-node@v3
         with:
@@ -105,7 +105,7 @@ jobs:
         run: yarn test
 
       - name: Run Terraform CDK
-        uses: hashicorp/terraform-cdk-action@v0.1
+        uses: hashicorp/terraform-cdk-action@v0.2
         with:
           cdktfVersion: 0.17.0
           terraformVersion: 1.5.2
@@ -132,7 +132,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: actions/setup-node@v3
         with:
@@ -149,7 +149,7 @@ jobs:
         run: yarn test
 
       - name: Test the synth
-        uses: hashicorp/terraform-cdk-action@v0.1
+        uses: hashicorp/terraform-cdk-action@v0.2
         with:
           cdktfVersion: 0.17.0
           terraformVersion: 1.5.2
