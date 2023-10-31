@@ -161,7 +161,7 @@ const project = new GitHubActionTypeScriptProject({
       {}
     ),
     runs: {
-      using: RunsUsing.NODE_16,
+      using: RunsUsing.NODE_20,
       main: "dist/index.js",
     },
   },

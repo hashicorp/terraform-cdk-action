@@ -3,7 +3,7 @@
 name: terraform-cdk-action
 description: The Terraform CDK GitHub Action allows you to run CDKTF as part of your CI/CD workflow.
 runs:
-  using: node16
+  using: node20
   main: dist/index.js
 author: HashiCorp, Inc.
 branding:
