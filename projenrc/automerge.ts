@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import { javascript } from "projen";
+import { typescript } from "projen";
 import { JobPermission } from "projen/lib/github/workflows-model";
 
 /**
  * Merges PRs with the "automerge" label
  */
 export class Automerge {
-  constructor(project: javascript.NodeProject) {
+  constructor(project: typescript.TypeScriptProject) {
     const workflow = project.github?.addWorkflow("automerge");
 
     if (!workflow) throw new Error("no workflow defined");

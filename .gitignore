@@ -39,7 +39,6 @@ junit.xml
 !/.github/workflows/upgrade-main.yml
 !/.prettierignore
 !/.prettierrc.json
-!/.npmrc
 !/test/
 !/tsconfig.json
 !/tsconfig.dev.json

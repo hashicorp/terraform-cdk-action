@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import { javascript } from "projen";
+import { typescript } from "projen";
 import { JobPermission } from "projen/lib/github/workflows-model";
 
 /**
  * Approves PRs with the "auto-approve" label
  */
 export class AutoApprove {
-  constructor(project: javascript.NodeProject) {
+  constructor(project: typescript.TypeScriptProject) {
     const workflow = project.github?.addWorkflow("auto-approve");
 
     if (!workflow) throw new Error("no workflow defined");

@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import { javascript } from "projen";
+import { typescript } from "projen";
 import { JobPermission, JobStep } from "projen/lib/github/workflows-model";
 
 /**
  * Checks for new versions of CDKTF and creates a PR with an upgrade change if there are changes.
  */
 export class UpgradeCDKTF {
-  constructor(project: javascript.NodeProject) {
+  constructor(project: typescript.TypeScriptProject) {
     const workflow = project.github?.addWorkflow("upgrade-cdktf");
 
     if (!workflow) throw new Error("no workflow defined");

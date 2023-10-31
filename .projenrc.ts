@@ -173,11 +173,12 @@ const project = new GitHubActionTypeScriptProject({
     "@hashicorp/js-releases@^1.7.0",
   ],
   devDeps: [
-    "projen-github-action-typescript@^0.0.392",
+    "projen-github-action-typescript@^0.0.394",
     "@types/fs-extra",
     "action-docs",
     "node-fetch@~2", // @TODO this can be removed once we upgrade to Node 18 and use native fetch
   ],
+  peerDeps: ["constructs@^10.0.0"],
   minNodeVersion: "18.12.0",
 });
 

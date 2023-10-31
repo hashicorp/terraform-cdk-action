@@ -32,6 +32,11 @@
       "type": "build"
     },
     {
+      "name": "constructs",
+      "version": "^10.0.0",
+      "type": "build"
+    },
+    {
       "name": "eslint-config-prettier",
       "type": "build"
     },
@@ -85,7 +90,7 @@
     },
     {
       "name": "projen-github-action-typescript",
-      "version": "^0.0.392",
+      "version": "^0.0.394",
       "type": "build"
     },
     {
@@ -104,6 +109,11 @@
     {
       "name": "typescript",
       "type": "build"
+    },
+    {
+      "name": "constructs",
+      "version": "^10.0.0",
+      "type": "peer"
     },
     {
       "name": "@actions/core",
