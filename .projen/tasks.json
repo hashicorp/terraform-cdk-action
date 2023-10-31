@@ -229,13 +229,13 @@
           "exec": "yarn upgrade npm-check-updates"
         },
         {
-          "exec": "npm-check-updates --upgrade --target=minor --filter=@types/fs-extra,@types/jest,@types/node,@typescript-eslint/eslint-plugin,@typescript-eslint/parser,@vercel/ncc,action-docs,eslint-config-prettier,eslint-import-resolver-node,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,eslint,jest,jest-junit,npm-check-updates,prettier,projen,projen-github-action-typescript,standard-version,ts-jest,ts-node,typescript,@actions/core,@actions/exec,@actions/github,@actions/io,@actions/tool-cache,@hashicorp/js-releases"
+          "exec": "npm-check-updates --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@types/fs-extra,@types/jest,@types/node,@typescript-eslint/eslint-plugin,@typescript-eslint/parser,@vercel/ncc,action-docs,constructs,eslint-config-prettier,eslint-import-resolver-node,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,eslint,jest,jest-junit,npm-check-updates,prettier,projen,projen-github-action-typescript,standard-version,ts-jest,ts-node,typescript,@actions/core,@actions/exec,@actions/github,@actions/io,@actions/tool-cache,@hashicorp/js-releases"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @types/fs-extra @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser @vercel/ncc action-docs eslint-config-prettier eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest jest-junit npm-check-updates prettier projen projen-github-action-typescript standard-version ts-jest ts-node typescript @actions/core @actions/exec @actions/github @actions/io @actions/tool-cache @hashicorp/js-releases"
+          "exec": "yarn upgrade @types/fs-extra @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser @vercel/ncc action-docs constructs eslint-config-prettier eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest jest-junit npm-check-updates prettier projen projen-github-action-typescript standard-version ts-jest ts-node typescript @actions/core @actions/exec @actions/github @actions/io @actions/tool-cache @hashicorp/js-releases"
         },
         {
           "exec": "npx projen"
