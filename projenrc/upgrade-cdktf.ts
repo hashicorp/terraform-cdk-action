@@ -46,6 +46,13 @@ export class UpgradeCDKTF {
             uses: "actions/checkout@v3",
           },
           {
+            name: "Setup Node.js",
+            uses: "actions/setup-node@v3",
+            with: {
+              "node-version": project.minNodeVersion,
+            },
+          },
+          {
             name: "Install",
             run: "yarn install",
           },
