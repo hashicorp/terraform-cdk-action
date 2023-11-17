@@ -95,6 +95,13 @@ const inputs = {
     required: false,
     type: "string",
   },
+  parallelism: {
+    description:
+      "Number of concurrent CDKTF stacks to run. Defaults to infinity, denoted by -1",
+    default: "-1",
+    required: false,
+    type: "string",
+  },
 };
 
 const repoName = "terraform-cdk-action";

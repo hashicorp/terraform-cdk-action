@@ -79,8 +79,8 @@ async function execute(
   await setupTerraform(inputs.terraformVersion);
 
   const fullCdktfCommand = inputs.customNpxArgs
-    ? `npx --yes ${inputs.customNpxArgs} cdktf-cli@${inputs.cdktfVersion} ${cdktfCommand}`
-    : `npx --yes cdktf-cli@${inputs.cdktfVersion} ${cdktfCommand}`;
+    ? `npx --yes ${inputs.customNpxArgs} cdktf-cli@${inputs.cdktfVersion} ${cdktfCommand} --parallelism=${inputs.parallelism}`
+    : `npx --yes cdktf-cli@${inputs.cdktfVersion} ${cdktfCommand} --parallelism=${inputs.parallelism}`;
 
   core.debug(`Executing: ${fullCdktfCommand}`);
   let output = "";
@@ -128,6 +128,7 @@ export async function run(): Promise<void> {
     commentOnPr: input.commentOnPr,
     updateComment: input.updateComment,
     customNpxArgs: input.customNpxArgs,
+    parallelism: input.parallelism,
   };
   const octokit = github.getOctokit(inputs.githubToken);
   const commentController = new CommentController({
