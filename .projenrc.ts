@@ -275,6 +275,8 @@ project.release?.addJobs({
   },
 });
 
+project.eslint?.addIgnorePattern("test-stacks/**/*.ts");
+
 const releaseWorkflow = project.tryFindObjectFile(
   ".github/workflows/release.yml"
 );

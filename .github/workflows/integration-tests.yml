@@ -1,0 +1,27 @@
+name: integration-tests
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - name: Setup Node.js
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
+        with:
+          node-version: 20.9.0
+      - name: Install Dependencies
+        run: cd test-stacks && yarn install
+      - name: Integration Test - Plan
+        uses: ./
+        with:
+          workingDirectory: ./test-stacks
+          stackName: "test-stack"
+          mode: plan-only
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          commentOnPr: false
