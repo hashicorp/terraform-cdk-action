@@ -52,3 +52,14 @@ jobs:
           mode: plan-only
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           commentOnPr: false
+      - name: Integration Test - Plan
+        uses: ./
+        with:
+          workingDirectory: ./test-stacks
+          stackName: "test-stack"
+          mode: plan-only
+          terraformCloudToken: ${{ secrets.TF_API_TOKEN }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          commentOnPr: false
+        env:
+          TFC_BACKEND: true
