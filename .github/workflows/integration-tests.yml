@@ -1,0 +1,54 @@
+name: integration-tests
+on:
+  pull_request: {}
+  workflow_dispatch: {}
+jobs:
+  prepare-integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - name: Setup Node.js
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
+        with:
+          node-version: 20.9.0
+      - name: Install dependencies
+        run: yarn install --check-files
+      - name: build
+        run: npx projen build
+      - name: Upload dist
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        with:
+          name: dist
+          path: dist
+  integrations-tests:
+    needs: prepare-integration-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - name: Setup Node.js
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
+        with:
+          node-version: 20.9.0
+      - name: Download dist
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
+        with:
+          name: dist
+          path: dist
+      - name: Install Dependencies
+        run: cd test-stacks && yarn install
+      - name: Integration Test - Plan
+        uses: ./
+        with:
+          workingDirectory: ./test-stacks
+          stackName: "test-stack"
+          mode: plan-only
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          commentOnPr: false
