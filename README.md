@@ -17,7 +17,7 @@ The Terraform CDK GitHub Action allows you to run CDKTF as part of your CI/CD wo
 | commentOnPr | Whether to comment the plan / the status on the PR | `false` | true |
 | updateComment | Whether to update the last comment on the PR rather than adding a new comment | `false` | true |
 | customNpxArgs | The additional CLI arguments to pass to npx as part of the cdktf-cli execution. | `false` |  |
-| parallelism | Number of concurrent CDKTF stacks to run. Defaults to infinity, denoted by -1 | `false` | -1 |
+| parallelism | Number of concurrent CDKTF stacks to run. Defaults to infinity, denoted by -1 | `false` |  |
 <!-- action-docs-inputs -->
 
 ## Example Configurations

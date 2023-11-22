@@ -98,7 +98,7 @@ const inputs = {
   parallelism: {
     description:
       "Number of concurrent CDKTF stacks to run. Defaults to infinity, denoted by -1",
-    default: "-1",
+    default: "",
     required: false,
     type: "string",
   },
