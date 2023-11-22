@@ -50,5 +50,6 @@ jobs:
           workingDirectory: ./test-stacks
           stackName: "test-stack"
           mode: plan-only
+          parallelism: 1
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           commentOnPr: false
