@@ -41,6 +41,7 @@ describe("comment", () => {
     commentOnPr: true,
     updateComment: true,
     customNpxArgs: "",
+    parallelism: "-1",
   };
 
   const pullRequestData = {
