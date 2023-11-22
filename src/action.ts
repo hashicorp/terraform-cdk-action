@@ -79,8 +79,15 @@ async function execute(
   await setupTerraform(inputs.terraformVersion);
 
   const fullCdktfCommand = inputs.customNpxArgs
-    ? `npx --yes ${inputs.customNpxArgs} cdktf-cli@${inputs.cdktfVersion} ${cdktfCommand} --parallelism=${inputs.parallelism}`
-    : `npx --yes cdktf-cli@${inputs.cdktfVersion} ${cdktfCommand} --parallelism=${inputs.parallelism}`;
+    ? `npx --yes ${inputs.customNpxArgs} cdktf-cli@${
+        inputs.cdktfVersion
+      } ${cdktfCommand} ${
+        inputs.parallelism ? `--parallelism=${inputs.parallelism}` : ""
+      }`
+    : `npx --yes cdktf-cli@${inputs.cdktfVersion} ${cdktfCommand} ${
+        inputs.parallelism ? `--parallelism=${inputs.parallelism}` : ""
+      }
+      }`;
 
   core.debug(`Executing: ${fullCdktfCommand}`);
   let output = "";
