@@ -102,7 +102,6 @@ async function execute(
         stdout: (data) => {
           const str = data.toString();
           output += str;
-          core.info(str);
         },
       },
     });
