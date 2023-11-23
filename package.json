@@ -50,7 +50,7 @@
     "npm-check-updates": "^16",
     "prettier": "^2.8.8",
     "projen": "^0.76.15",
-    "projen-github-action-typescript": "^0.0.394",
+    "projen-github-action-typescript": "^0.0.395",
     "standard-version": "^9",
     "ts-jest": "^27",
     "ts-node": "^10.9.1",

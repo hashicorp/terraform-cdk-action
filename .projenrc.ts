@@ -173,7 +173,7 @@ const project = new GitHubActionTypeScriptProject({
     "@hashicorp/js-releases@^1.7.0",
   ],
   devDeps: [
-    "projen-github-action-typescript@^0.0.394",
+    "projen-github-action-typescript@^0.0.395",
     "@types/fs-extra",
     "action-docs",
   ],
@@ -220,6 +220,7 @@ project.addPackageIgnore("scripts");
 project.addPackageIgnore("examples");
 project.addPackageIgnore("projenrc");
 project.addPackageIgnore("/.projenrc.ts");
+project.addPackageIgnore("test-stacks");
 
 project.addPackageIgnore(".copywrite.hcl");
 // Add copywrite headers to all files
@@ -288,6 +289,8 @@ releaseWorkflow?.addOverride("on.push", {
     ".github/CODEOWNERS",
     ".github/dependabot.yml",
     ".github/**/*.md",
+    "test/**",
+    "test-stacks/**",
   ],
 });
 // The below is necessary in order to allow the git-tags workflow to run

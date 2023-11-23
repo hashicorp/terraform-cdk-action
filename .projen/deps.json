@@ -85,7 +85,7 @@
     },
     {
       "name": "projen-github-action-typescript",
-      "version": "^0.0.394",
+      "version": "^0.0.395",
       "type": "build"
     },
     {
