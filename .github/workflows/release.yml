@@ -11,6 +11,8 @@ on:
       - .github/CODEOWNERS
       - .github/dependabot.yml
       - .github/**/*.md
+      - test/**
+      - test-stacks/**
   workflow_dispatch: {}
 jobs:
   release:
