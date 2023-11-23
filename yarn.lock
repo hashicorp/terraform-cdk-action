@@ -5377,10 +5377,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen-github-action-typescript@^0.0.394:
-  version "0.0.394"
-  resolved "https://registry.yarnpkg.com/projen-github-action-typescript/-/projen-github-action-typescript-0.0.394.tgz#527d56fd11f93a40613cc71d53b273abeb475589"
-  integrity sha512-/4Vjkwo4V+RTEZnBl3jnclIWeHcgg/khG4JzshkB3zapgc8ZLh/jYpH8eVwsJQUYqNR+veHXyt/HytUAFVztcQ==
+projen-github-action-typescript@^0.0.395:
+  version "0.0.395"
+  resolved "https://registry.yarnpkg.com/projen-github-action-typescript/-/projen-github-action-typescript-0.0.395.tgz#b302e18eed9b8f8737614c54b1249b0cc7642fd8"
+  integrity sha512-6wYEbV3MVt1ikzt1WKfFCFGi2QW94vZF6UU/UkIPY9al9YxfYkS9H3jJ2sz2gtRAXSX9JBk8g3IvmphRpqGsDg==
 
 projen@^0.76.15:
   version "0.76.15"

@@ -16,13 +16,14 @@ export class AutoApprove {
     if (!workflow) throw new Error("no workflow defined");
 
     workflow.on({
-      pullRequest: {
+      pullRequestTarget: {
         types: ["opened", "labeled", "ready_for_review", "reopened"],
       },
     });
 
     (workflow.concurrency as any) = "${{ github.workflow }}-${{ github.ref }}";
 
+    const maintainerStatuses = `fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]')`;
     const commentText =
       '"Since I authored this PR, I can\'t approve it myself, sorry! Someone else will need to approve it."';
 
@@ -45,8 +46,8 @@ export class AutoApprove {
           },
           {
             name: "Auto-approve PRs by other users as team-tf-cdk",
-            if: "github.event.pull_request.user.login != 'team-tf-cdk'",
-            run: "gh pr review $PR_ID --approve",
+            if: `github.event.pull_request.user.login != 'team-tf-cdk' && (contains(${maintainerStatuses}, github.event.pull_request.author_association) || github.actor == 'dependabot[bot]')`,
+            run: "gh pr review ${{ github.event.pull_request.number }} --approve",
             env: {
               GH_TOKEN: "${{ secrets.PROJEN_GITHUB_TOKEN }}",
             },

@@ -24,4 +24,13 @@ CI=0 npx projen
 echo "Updating README"
 sed -i 's/node-version: .*/node-version: '"$NODE_VERSION_SHORT"'/' "$PROJECT_ROOT/README.md"
 
+echo "Updating integration tests workflow"
+sed -i 's/node-version: .*/node-version: '"$NODE_VERSION_SHORT"'/' "$PROJECT_ROOT/.github/workflows/integration-tests.yml"
+
+echo "Updating test-stacks directory"
+cd "$PROJECT_ROOT/test-stacks"
+npm pkg set engines.node=">= $NODE_VERSION"
+yarn
+yarn add -D @types/node@^$NODE_VERSION_SHORT
+
 echo "Done"

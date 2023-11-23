@@ -24,4 +24,5 @@ scripts
 examples
 projenrc
 /.projenrc.ts
+test-stacks
 .copywrite.hcl
