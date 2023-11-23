@@ -85,9 +85,10 @@ export async function setupTerraform(version: string) {
 
   // Download requested version
   const pathToCLI = await downloadCLI(build.url);
-
+  // cache directory
+  const cachedCLIPath = await tc.cacheDir(pathToCLI, "terraform", version);
   // Add to path
-  core.addPath(pathToCLI);
+  core.addPath(cachedCLIPath);
 
-  return pathToCLI;
+  return cachedCLIPath;
 }
