@@ -44,7 +44,7 @@ jobs:
           path: dist
       - name: Install Dependencies
         run: cd test-stacks && yarn install
-      - name: Integration Test - Plan
+      - name: Integration Test - Local
         uses: ./
         with:
           workingDirectory: ./test-stacks
@@ -52,3 +52,14 @@ jobs:
           mode: plan-only
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           commentOnPr: false
+      - name: Integration Test - TFC
+        uses: ./
+        with:
+          workingDirectory: ./test-stacks
+          stackName: "test-stack"
+          mode: plan-only
+          terraformCloudToken: ${{ secrets.TF_API_TOKEN }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          commentOnPr: false
+        env:
+          TFC_BACKEND: true

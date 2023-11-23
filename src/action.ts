@@ -91,7 +91,7 @@ async function execute(
         ...process.env,
         FORCE_COLOR: "0", // disable chalk terminal colors
         TF_CLI_ARGS: "-no-color", // disable terraform colors
-        TERRAFORM_CLOUD_TOKEN: inputs.terraformCloudToken, // set the terraform cloud token if present
+        TF_TOKEN_app_terraform_io: inputs.terraformCloudToken, // set the terraform cloud token if present
       },
       listeners: {
         stderr: (data) => {
