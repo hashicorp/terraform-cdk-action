@@ -110,9 +110,7 @@ export class UpgradeTerraform {
             },
             run: [
               `GHA_VERSION_MAJOR=$(cut -d "." -f 1 <<< "$GHA_VERSION" | cut -c2-)`,
-              `echo "GHA_VERSION_MAJOR=$GHA_VERSION_MAJOR"`,
               `NEW_GHA_VERSION=$((GHA_VERSION_MAJOR + 1))`,
-              `echo "NEW_GHA_VERSION=$NEW_GHA_VERSION"`,
               `sed -i 's/terraform-cdk-action@v.*/terraform-cdk-action@v'"$NEW_GHA_VERSION"'/' "./README.md"`,
             ].join("\n"),
           },
