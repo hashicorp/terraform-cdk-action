@@ -46,7 +46,7 @@ jobs:
       - name: Get the latest version of this GitHub Action from git
         id: github_action
         if: steps.current_version.outputs.minor != steps.latest_version.outputs.minor
-        run: echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
+        run: echo "version=$(git describe --tags | cut -d "-" -f 1)" >> $GITHUB_OUTPUT
       - name: Update the README for a breaking change
         if: steps.current_version.outputs.minor != steps.latest_version.outputs.minor
         env:

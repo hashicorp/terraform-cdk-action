@@ -99,7 +99,8 @@ export class UpgradeTerraform {
             name: "Get the latest version of this GitHub Action from git",
             if: "steps.current_version.outputs.minor != steps.latest_version.outputs.minor",
             id: "github_action",
-            run: 'echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT',
+            run: 'echo "version=$(git describe --tags | cut -d "-" -f 1)" >> $GITHUB_OUTPUT',
+            // the `cut` is here because if you run this on a branch, the tag looks like `v0.3.7-2-gc4ec783`
           },
           {
             name: "Update the README for a breaking change",
