@@ -39,11 +39,11 @@ export class UpgradeNode {
     const commonSteps: JobStep[] = [
       {
         name: "Checkout",
-        uses: "actions/checkout@v3",
+        uses: "actions/checkout@v4",
       },
       {
         name: "Setup Node.js",
-        uses: "actions/setup-node@v3",
+        uses: "actions/setup-node@v4",
         with: {
           "node-version": project.minNodeVersion,
         },
@@ -80,7 +80,7 @@ export class UpgradeNode {
           "This PR initiates the upgrade of Node.js from `v${{ steps.current_version.outputs.value }}` to `v${{ steps.latest_version.outputs.value }}`.",
           "Unfortunately, not everything can be automated, and the following steps need to be completed manually:",
           " ",
-          "- [ ] Check if the `RunsUsing` value should be updated [here](https://github.com/hashicorp/terraform-cdk-action/blob/a3c5ee863d0fb3e054cc81baa13f0c88115a4d6f/.projenrc.ts#L153). Check [here](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) for supported options.",
+          "- [ ] Check if the `RunsUsing` value should be updated [here](https://github.com/hashicorp/terraform-cdk-action/blob/8b74e0c471bd6eb9ea8869f1a73de83b7129717e/.projenrc.ts#L164). Check [here](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) for supported options.",
           "    - Note that the GitHub Actions runners don't automatically support every LTS version - sometimes they skip one.",
           "- [ ] Run `npx projen build`",
           " ",
@@ -104,7 +104,7 @@ export class UpgradeNode {
           ...commonSteps,
           {
             name: "Get the earliest supported Node.js version whose EOL date is at least a month away",
-            uses: "actions/github-script@v6",
+            uses: "actions/github-script@v7",
             with: {
               script: [
                 `const script = require('./scripts/check-node-versions.js')`,
