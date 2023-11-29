@@ -43,11 +43,14 @@ export class UpgradeCDKTF {
         steps: [
           {
             name: "Checkout",
-            uses: "actions/checkout@v3",
+            uses: "actions/checkout@v4",
+            with: {
+              "fetch-depth": 0,
+            },
           },
           {
             name: "Setup Node.js",
-            uses: "actions/setup-node@v3",
+            uses: "actions/setup-node@v4",
             with: {
               "node-version": project.minNodeVersion,
             },
@@ -83,6 +86,24 @@ export class UpgradeCDKTF {
             name: "Run upgrade script",
             if: "steps.current_version.outputs.value != steps.latest_version.outputs.value",
             run: "scripts/update-cdktf.sh ${{ steps.latest_version.outputs.value }}",
+          },
+          {
+            name: "Get the latest version of this GitHub Action from git",
+            if: "steps.current_version.outputs.minor != steps.latest_version.outputs.minor",
+            id: "github_action",
+            run: 'echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT',
+          },
+          {
+            name: "Update the README for a breaking change",
+            if: "steps.current_version.outputs.minor != steps.latest_version.outputs.minor",
+            env: {
+              GHA_VERSION: "${{ steps.github_action.outputs.version }}",
+            },
+            run: [
+              `GHA_VERSION_MAJOR=$(cut -d "." -f 1 <<< "$GHA_VERSION" | cut -c2-)`,
+              `NEW_GHA_VERSION=$((GHA_VERSION_MAJOR+1))`,
+              `sed -i 's/terraform-cdk-action@v.*/terraform-cdk-action@v'"$NEW_GHA_VERSION"'/' "./README.md"`,
+            ].join("\n"),
           },
           {
             ...createPRbase,

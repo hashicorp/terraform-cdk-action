@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        with:
+          fetch-depth: 0
       - name: Setup Node.js
         uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65
         with:
@@ -41,12 +43,23 @@ jobs:
         id: latest_version
         run: |-
           TERRAFORM_VERSION_MINOR=$(cut -d "." -f 2 <<< "$NEW_TERRAFORM_VERSION")
-          echo "NEW_TERRAFORM_VERSION_MINOR=$TERRAFORM_VERSION_MINOR" >> $GITHUB_ENV
           echo "value=$NEW_TERRAFORM_VERSION" >> $GITHUB_OUTPUT
           echo "minor=$TERRAFORM_VERSION_MINOR" >> $GITHUB_OUTPUT
       - name: Run upgrade script
         if: steps.current_version.outputs.value != steps.latest_version.outputs.value
         run: scripts/update-terraform.sh ${{ steps.latest_version.outputs.value }}
+      - name: Get the latest version of this GitHub Action from git
+        id: github_action
+        if: steps.current_version.outputs.minor != steps.latest_version.outputs.minor
+        run: echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
+      - name: Update the README for a breaking change
+        if: steps.current_version.outputs.minor != steps.latest_version.outputs.minor
+        env:
+          GHA_VERSION: ${{ steps.github_action.outputs.version }}
+        run: |-
+          GHA_VERSION_MAJOR=$(cut -d "." -f 1 <<< "$GHA_VERSION" | cut -c2-)
+          NEW_GHA_VERSION=$((GHA_VERSION_MAJOR+1))
+          sed -i 's/terraform-cdk-action@v.*/terraform-cdk-action@v'"$NEW_GHA_VERSION"'/' "./README.md"
       - name: Create pull request for a breaking change
         if: steps.current_version.outputs.minor != steps.latest_version.outputs.minor
         uses: peter-evans/create-pull-request@153407881ec5c347639a548ade7d8ad1d6740e38
@@ -64,6 +77,13 @@ jobs:
           body: |-
             This PR increases the default version of Terraform used from `${{ steps.current_version.outputs.value }}` to version `${{ steps.latest_version.outputs.value }}`.
             This is considered a breaking change because anyone who does not manually specify a `terraformVersion` in their action configuration will automatically start using the new version.
+             
+            Unfortunately, not everything can be automated, and the following steps need to be completed manually:
+             
+            - [ ] Update the _Terraform Version_ to `${{ steps.latest_version.outputs.value }}` in the TFC web UI for the [cdk-action-testing](https://app.terraform.io/app/cdktf/workspaces/cdk-action-testing/settings/general) workspace
+             
+            Please complete the above steps and then mark this PR as ready for review to rerun the checks. Thanks!
+          draft: true
       - name: Create pull request for a non-breaking change
         if: steps.current_version.outputs.minor == steps.latest_version.outputs.minor
         uses: peter-evans/create-pull-request@153407881ec5c347639a548ade7d8ad1d6740e38

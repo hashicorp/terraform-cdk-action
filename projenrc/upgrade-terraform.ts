@@ -44,11 +44,14 @@ export class UpgradeTerraform {
         steps: [
           {
             name: "Checkout",
-            uses: "actions/checkout@v3",
+            uses: "actions/checkout@v4",
+            with: {
+              "fetch-depth": 0,
+            },
           },
           {
             name: "Setup Node.js",
-            uses: "actions/setup-node@v3",
+            uses: "actions/setup-node@v4",
             with: {
               "node-version": project.minNodeVersion,
             },
@@ -70,7 +73,7 @@ export class UpgradeTerraform {
           },
           {
             name: "Get latest Terraform version",
-            uses: "actions/github-script@v6",
+            uses: "actions/github-script@v7",
             with: {
               script: [
                 `const script = require('./scripts/check-terraform-version.js')`,
@@ -83,7 +86,6 @@ export class UpgradeTerraform {
             id: "latest_version",
             run: [
               `TERRAFORM_VERSION_MINOR=$(cut -d "." -f 2 <<< "$NEW_TERRAFORM_VERSION")`,
-              `echo "NEW_TERRAFORM_VERSION_MINOR=$TERRAFORM_VERSION_MINOR" >> $GITHUB_ENV`,
               `echo "value=$NEW_TERRAFORM_VERSION" >> $GITHUB_OUTPUT`,
               `echo "minor=$TERRAFORM_VERSION_MINOR" >> $GITHUB_OUTPUT`,
             ].join("\n"),
@@ -92,6 +94,24 @@ export class UpgradeTerraform {
             name: "Run upgrade script",
             if: "steps.current_version.outputs.value != steps.latest_version.outputs.value",
             run: "scripts/update-terraform.sh ${{ steps.latest_version.outputs.value }}",
+          },
+          {
+            name: "Get the latest version of this GitHub Action from git",
+            if: "steps.current_version.outputs.minor != steps.latest_version.outputs.minor",
+            id: "github_action",
+            run: 'echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT',
+          },
+          {
+            name: "Update the README for a breaking change",
+            if: "steps.current_version.outputs.minor != steps.latest_version.outputs.minor",
+            env: {
+              GHA_VERSION: "${{ steps.github_action.outputs.version }}",
+            },
+            run: [
+              `GHA_VERSION_MAJOR=$(cut -d "." -f 1 <<< "$GHA_VERSION" | cut -c2-)`,
+              `NEW_GHA_VERSION=$((GHA_VERSION_MAJOR+1))`,
+              `sed -i 's/terraform-cdk-action@v.*/terraform-cdk-action@v'"$NEW_GHA_VERSION"'/' "./README.md"`,
+            ].join("\n"),
           },
           {
             ...createPRbase,
@@ -106,7 +126,14 @@ export class UpgradeTerraform {
               body: [
                 "This PR increases the default version of Terraform used from `${{ steps.current_version.outputs.value }}` to version `${{ steps.latest_version.outputs.value }}`.",
                 "This is considered a breaking change because anyone who does not manually specify a `terraformVersion` in their action configuration will automatically start using the new version.",
+                " ",
+                "Unfortunately, not everything can be automated, and the following steps need to be completed manually:",
+                " ",
+                "- [ ] Update the _Terraform Version_ to `${{ steps.latest_version.outputs.value }}` in the TFC web UI for the [cdk-action-testing](https://app.terraform.io/app/cdktf/workspaces/cdk-action-testing/settings/general) workspace",
+                " ",
+                "Please complete the above steps and then mark this PR as ready for review to rerun the checks. Thanks!",
               ].join("\n"),
+              draft: true,
             },
           },
           {
