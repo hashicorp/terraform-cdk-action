@@ -106,6 +106,7 @@ const project = new GitHubActionTypeScriptProject({
   authorName: "HashiCorp",
   authorUrl: "https://hashicorp.com",
   authorOrganization: true,
+  minMajorVersion: 1, // should only be set once you are ready for a 1.0 release!
   defaultReleaseBranch: "main",
   projenrcTs: true,
   prettier: true,
