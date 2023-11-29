@@ -58,7 +58,9 @@ jobs:
           GHA_VERSION: ${{ steps.github_action.outputs.version }}
         run: |-
           GHA_VERSION_MAJOR=$(cut -d "." -f 1 <<< "$GHA_VERSION" | cut -c2-)
-          NEW_GHA_VERSION=$((GHA_VERSION_MAJOR+1))
+          echo "GHA_VERSION_MAJOR=$GHA_VERSION_MAJOR"
+          NEW_GHA_VERSION=$((GHA_VERSION_MAJOR + 1))
+          echo "NEW_GHA_VERSION=$NEW_GHA_VERSION"
           sed -i 's/terraform-cdk-action@v.*/terraform-cdk-action@v'"$NEW_GHA_VERSION"'/' "./README.md"
       - name: Create pull request for a breaking change
         if: steps.current_version.outputs.minor != steps.latest_version.outputs.minor
