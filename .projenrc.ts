@@ -116,7 +116,7 @@ const project = new GitHubActionTypeScriptProject({
   depsUpgradeOptions: {
     workflowOptions: {
       labels: ["automerge", "dependencies"],
-      schedule: UpgradeDependenciesSchedule.MONTHLY,
+      schedule: UpgradeDependenciesSchedule.WEEKLY,
     },
   },
   workflowGitIdentity: {
@@ -283,15 +283,9 @@ const releaseWorkflow = project.tryFindObjectFile(
 );
 releaseWorkflow?.addOverride("on.push", {
   branches: ["main"],
-  "paths-ignore": [
-    // don't do a release if the change was only to these files/directories
-    "examples/**",
-    ".github/ISSUE_TEMPLATE/**",
-    ".github/CODEOWNERS",
-    ".github/dependabot.yml",
-    ".github/**/*.md",
-    "test/**",
-    "test-stacks/**",
+  paths: [
+    // only publish a release if the built files were changed in any way
+    "dist/**",
   ],
 });
 // The below is necessary in order to allow the git-tags workflow to run
