@@ -156,3 +156,7 @@ jobs:
           mode: synth-only
           stackName: my-stack
 ```
+
+## Limitations
+
+This action is intended to be limited to a single stack. While you could pass `*` as the stack name and use multi-stack deployments, we don't currently support all the complexities of doing accurate plans across multiple dependent workspaces within the action.
