@@ -284,8 +284,9 @@ const releaseWorkflow = project.tryFindObjectFile(
 releaseWorkflow?.addOverride("on.push", {
   branches: ["main"],
   paths: [
-    // only publish a release if the built files were changed in any way
+    // only publish a release if these files were changed in any way
     "dist/**",
+    "action.yml",
   ],
 });
 // The below is necessary in order to allow the git-tags workflow to run
