@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@cdktf/provider-null": "9.0.1",
-    "cdktf": "^0.19.1",
+    "cdktf": "^0.19.2",
     "constructs": "^10.3.0"
   },
   "devDependencies": {
