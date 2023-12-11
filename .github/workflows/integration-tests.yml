@@ -6,8 +6,7 @@ on:
       - ready_for_review
       - reopened
       - synchronize
-  workflow_dispatch: {}
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency: ${{ github.workflow }}-${{ github.head_ref }}
 jobs:
   prepare-integration-tests:
     runs-on: ubuntu-latest
