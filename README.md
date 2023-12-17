@@ -8,7 +8,7 @@ The Terraform CDK GitHub Action allows you to run CDKTF as part of your CI/CD wo
 | parameter | description | required | default |
 | --- | --- | --- | --- |
 | cdktfVersion | The version of CDKTF to use | `false` | 0.19.2 |
-| terraformVersion | The version of Terraform to use | `false` | 1.6.5 |
+| terraformVersion | The version of Terraform to use | `false` | 1.6.6 |
 | workingDirectory | The directory to use for the project | `false` | ./ |
 | mode | What action to take: `synth-only` runs only the synthesis, `plan-only` only runs a plan, `auto-approve-apply` runs a plan and then performs an apply, `auto-approve-destroy` runs a plan and then performs a destroy | `true` |  |
 | stackName | The stack to run / plan, only required when the mode is `plan-only` or `plan-and-apply` | `false` |  |
@@ -60,7 +60,7 @@ jobs:
         uses: hashicorp/terraform-cdk-action@v1
         with:
           cdktfVersion: 0.19.2
-          terraformVersion: 1.6.5
+          terraformVersion: 1.6.6
           mode: plan-only
           stackName: my-stack
           terraformCloudToken: ${{ secrets.TF_API_TOKEN }}
@@ -108,7 +108,7 @@ jobs:
         uses: hashicorp/terraform-cdk-action@v1
         with:
           cdktfVersion: 0.19.2
-          terraformVersion: 1.6.5
+          terraformVersion: 1.6.6
           mode: auto-approve-apply
           stackName: my-stack
           terraformCloudToken: ${{ secrets.TF_API_TOKEN }}
@@ -152,7 +152,7 @@ jobs:
         uses: hashicorp/terraform-cdk-action@v1
         with:
           cdktfVersion: 0.19.2
-          terraformVersion: 1.6.5
+          terraformVersion: 1.6.6
           mode: synth-only
           stackName: my-stack
 ```
