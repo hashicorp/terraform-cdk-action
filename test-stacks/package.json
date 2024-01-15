@@ -20,8 +20,8 @@
     "node": ">= 20.9.0"
   },
   "dependencies": {
-    "@cdktf/provider-null": "9.0.1",
-    "cdktf": "^0.19.2",
+    "@cdktf/provider-null": "10.0.0",
+    "cdktf": "^0.20.0",
     "constructs": "^10.3.0"
   },
   "devDependencies": {
