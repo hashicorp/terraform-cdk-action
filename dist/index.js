@@ -17256,6 +17256,7 @@ var preservedUrlFields = [
   "protocol",
   "query",
   "search",
+  "hash",
 ];
 
 // Create handlers that pass events from native requests
