@@ -970,10 +970,10 @@ caniuse-lite@^1.0.30001541:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001564.tgz#eaa8bbc58c0cbccdcb7b41186df39dd2ba591889"
   integrity sha512-DqAOf+rhof+6GVx1y+xzbFPeOumfQnhYzVnZD6LAXijR77yPtm9mfOcqOnT3mpnJiZVT+kwLAFnRlZcIz+c6bg==
 
-cdktf@^0.20.0:
-  version "0.20.0"
-  resolved "https://registry.yarnpkg.com/cdktf/-/cdktf-0.20.0.tgz#fae129c9431350ebbf02a95129db6687ee323e43"
-  integrity sha512-4bCG1/7cYYGyiC++zxJ5wPUZVuxeXvZLY2BqE9heTV/PZtlcwUrV6wfUMtQFbYTCssCEJDnGrOe7Rw1Jf0Sf2w==
+cdktf@^0.20.1:
+  version "0.20.1"
+  resolved "https://registry.yarnpkg.com/cdktf/-/cdktf-0.20.1.tgz#9ffc1fbf058f5f5dbf8ea0b18ebaf1169f799b8c"
+  integrity sha512-+ypYzWrC0g+GN5Z6/tPQq4JNh8CVUxNP6rR1ANSHVU0E//GhRUAftxcPxSQh5uLPsJAsvw9dfZFEWSue0p2ekA==
   dependencies:
     archiver "5.3.2"
     json-stable-stringify "1.1.0"
