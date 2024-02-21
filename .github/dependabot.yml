@@ -18,31 +18,14 @@ updates:
       - security
     # Disable version updates for npm dependencies, only use Dependabot for security updates
     open-pull-requests-limit: 0
-  # Have Dependabot manage version upgrades for the integration tests (test-stacks directory)
-  - package-ecosystem: "npm"
-    versioning-strategy: "increase"
-    directory: "/test-stacks"
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: daily
     labels:
-      - "dependencies"
-      - "automerge"
-      - "auto-approve"
-    open-pull-requests-limit: 5
-    ignore:
-      - dependency-name: "@types/node"
-      # For providers, ignore all patch updates for version updates only
-      - dependency-name: "@cdktf/provider-*"
-        update-types: ["version-update:semver-patch"]
-    groups:
-      cdktf:
-        patterns:
-          - "cdktf"
-          - "cdktf-cli"
-          - "@cdktf/*"
-      jest:
-        patterns:
-          - "jest"
-          - "ts-jest"
-          - "@types/jest"
-          - "@jest/*"
+      - auto-approve
+      - automerge
+      - dependencies
+    # only update hashicorp actions, external actions managed by tsccr
+    allow:
+      - dependency-name: hashicorp/*

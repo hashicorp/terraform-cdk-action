@@ -42,7 +42,6 @@
     "node_modules/",
     "*.generated.ts",
     "coverage",
-    "test-stacks/**/*.ts",
     "!.projenrc.ts",
     "!projenrc/**/*.ts"
   ],

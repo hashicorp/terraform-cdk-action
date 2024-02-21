@@ -221,7 +221,6 @@ project.addPackageIgnore("scripts");
 project.addPackageIgnore("examples");
 project.addPackageIgnore("projenrc");
 project.addPackageIgnore("/.projenrc.ts");
-project.addPackageIgnore("test-stacks");
 
 project.addPackageIgnore(".copywrite.hcl");
 // Add copywrite headers to all files
@@ -275,8 +274,6 @@ project.release?.addJobs({
     ],
   },
 });
-
-project.eslint?.addIgnorePattern("test-stacks/**/*.ts");
 
 const releaseWorkflow = project.tryFindObjectFile(
   ".github/workflows/release.yml"
