@@ -78,9 +78,10 @@ async function execute(
   core.debug(`Installing terraform`);
   await setupTerraform(inputs.terraformVersion);
 
+  const mainCommand = `${cdktfCommand} ${inputs.cdktfArgs}`;
   const fullCdktfCommand = inputs.customNpxArgs
-    ? `npx --yes ${inputs.customNpxArgs} cdktf-cli@${inputs.cdktfVersion} ${cdktfCommand}`
-    : `npx --yes cdktf-cli@${inputs.cdktfVersion} ${cdktfCommand}`;
+    ? `npx --yes ${inputs.customNpxArgs} cdktf-cli@${inputs.cdktfVersion} ${mainCommand}`
+    : `npx --yes cdktf-cli@${inputs.cdktfVersion} ${mainCommand}`;
 
   core.debug(`Executing: ${fullCdktfCommand}`);
   let output = "";
@@ -127,6 +128,7 @@ export async function run(): Promise<void> {
     commentOnPr: input.commentOnPr,
     updateComment: input.updateComment,
     customNpxArgs: input.customNpxArgs,
+    cdktfArgs: input.cdktfArgs,
   };
   const octokit = github.getOctokit(inputs.githubToken);
   const commentController = new CommentController({
