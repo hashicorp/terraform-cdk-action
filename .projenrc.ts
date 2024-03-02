@@ -95,6 +95,13 @@ const inputs = {
     required: false,
     type: "string",
   },
+  cdktfArgs: {
+    description:
+      "The additional CLI arguments to pass to cdktf as part of the cdktf-cli execution.",
+    default: "",
+    required: false,
+    type: "string",
+  },
 };
 
 const repoName = "terraform-cdk-action";
