@@ -7,7 +7,7 @@ The Terraform CDK GitHub Action allows you to run CDKTF as part of your CI/CD wo
 
 | parameter | description | required | default |
 | --- | --- | --- | --- |
-| cdktfVersion | The version of CDKTF to use | `false` | 0.20.3 |
+| cdktfVersion | The version of CDKTF to use | `false` | 0.20.4 |
 | terraformVersion | The version of Terraform to use | `false` | 1.7.4 |
 | workingDirectory | The directory to use for the project | `false` | ./ |
 | mode | What action to take: `synth-only` runs only the synthesis, `plan-only` only runs a plan, `auto-approve-apply` runs a plan and then performs an apply, `auto-approve-destroy` runs a plan and then performs a destroy | `true` |  |
@@ -59,7 +59,7 @@ jobs:
       - name: Run Terraform CDK
         uses: hashicorp/terraform-cdk-action@v3
         with:
-          cdktfVersion: 0.20.3
+          cdktfVersion: 0.20.4
           terraformVersion: 1.7.4
           mode: plan-only
           stackName: my-stack
@@ -107,7 +107,7 @@ jobs:
       - name: Run Terraform CDK
         uses: hashicorp/terraform-cdk-action@v3
         with:
-          cdktfVersion: 0.20.3
+          cdktfVersion: 0.20.4
           terraformVersion: 1.7.4
           mode: auto-approve-apply
           stackName: my-stack
@@ -151,7 +151,7 @@ jobs:
       - name: Test the synth
         uses: hashicorp/terraform-cdk-action@v3
         with:
-          cdktfVersion: 0.20.3
+          cdktfVersion: 0.20.4
           terraformVersion: 1.7.4
           mode: synth-only
           stackName: my-stack
