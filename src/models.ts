@@ -15,4 +15,5 @@ export interface Inputs {
   commentOnPr: boolean;
   updateComment: boolean;
   customNpxArgs: string;
+  cdktfArgs: string;
 }
