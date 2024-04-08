@@ -62,7 +62,7 @@ jobs:
           sed -i 's/terraform-cdk-action@v.*/terraform-cdk-action@v'"$NEW_GHA_VERSION"'/' "./README.md"
       - name: Create pull request for a breaking change
         if: steps.current_version.outputs.minor != steps.latest_version.outputs.minor
-        uses: peter-evans/create-pull-request@a4f52f8033a6168103c2538976c07b467e8163bc
+        uses: peter-evans/create-pull-request@70a41aba780001da0a30141984ae2a0c95d8704e
         with:
           branch: auto/upgrade-terraform-1-${{ steps.latest_version.outputs.minor }}
           base: main
@@ -86,7 +86,7 @@ jobs:
           draft: true
       - name: Create pull request for a non-breaking change
         if: steps.current_version.outputs.minor == steps.latest_version.outputs.minor
-        uses: peter-evans/create-pull-request@a4f52f8033a6168103c2538976c07b467e8163bc
+        uses: peter-evans/create-pull-request@70a41aba780001da0a30141984ae2a0c95d8704e
         with:
           branch: auto/upgrade-terraform-1-${{ steps.latest_version.outputs.minor }}
           base: main
