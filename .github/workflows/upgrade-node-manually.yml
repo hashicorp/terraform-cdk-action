@@ -50,7 +50,7 @@ jobs:
         if: env.CURRENT_NODEJS_VERSION != env.NEW_NODEJS_VERSION
         run: scripts/update-node.sh $NEW_NODEJS_VERSION
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@a4f52f8033a6168103c2538976c07b467e8163bc
+        uses: peter-evans/create-pull-request@70a41aba780001da0a30141984ae2a0c95d8704e
         with:
           commit-message: "chore: increase Node.js version to ${{ steps.latest_version.outputs.value }}"
           branch: auto/upgrade-node-${{ steps.latest_version.outputs.short }}
