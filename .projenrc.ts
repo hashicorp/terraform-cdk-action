@@ -23,7 +23,7 @@ const githubActionPinnedVersions = {
 const inputs = {
   cdktfVersion: {
     description: "The version of CDKTF to use",
-    default: "0.20.6",
+    default: "0.20.7",
     required: false,
     type: "string",
   },
