@@ -7,6 +7,7 @@
 // Removed the credentials and wrapper part, we don't need them we solve it through CDKTF directly
 
 // Node.js core
+import { execSync } from "child_process";
 import * as os from "os";
 
 // External
@@ -60,7 +61,40 @@ async function downloadCLI(url: string) {
   return pathToCLI;
 }
 
+/**
+ * Check if wanted version of Terraform is already available to prevent extra downloads
+ *
+ * @param version expected version of Terraform
+ */
+async function checkVersionAvailability(version: string): Promise<boolean> {
+  try {
+    const terraformVersion = JSON.parse(
+      execSync("terraform version -json", {
+        encoding: "utf8",
+        // Don't print out error if command is not found
+        stdio: "pipe",
+      })
+    ).terraform_version;
+    if (terraformVersion !== version) {
+      core.debug(
+        `Installed Terraform version is ${terraformVersion} while expecting ${version}`
+      );
+      return false;
+    }
+    core.debug(
+      `Configured Terraform version ${terraformVersion} already available in PATH`
+    );
+    return true;
+  } catch (e) {
+    core.debug("Terraform installation not found from PATH");
+    return false;
+  }
+}
+
 export async function setupTerraform(version: string) {
+  if (await checkVersionAvailability(version)) {
+    return;
+  }
   // Gather OS details
   const osPlatform = os.platform();
   const osArch = os.arch();
