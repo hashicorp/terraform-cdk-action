@@ -29,7 +29,7 @@ const inputs = {
   },
   terraformVersion: {
     description: "The version of Terraform to use",
-    default: "1.8.5",
+    default: "1.9.0",
     required: false,
     type: "string",
   },
