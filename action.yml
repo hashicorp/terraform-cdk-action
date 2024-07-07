@@ -16,7 +16,7 @@ inputs:
     required: false
   terraformVersion:
     description: The version of Terraform to use
-    default: 1.9.0
+    default: 1.9.1
     required: false
   workingDirectory:
     description: The directory to use for the project
