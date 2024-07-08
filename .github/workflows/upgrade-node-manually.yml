@@ -19,7 +19,7 @@ jobs:
       CHECKPOINT_DISABLE: "1"
     steps:
       - name: Checkout
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
       - name: Setup Node.js
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8
         with:
@@ -50,7 +50,7 @@ jobs:
         if: env.CURRENT_NODEJS_VERSION != env.NEW_NODEJS_VERSION
         run: scripts/update-node.sh $NEW_NODEJS_VERSION
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@6d6857d36972b65feb161a90e484f2984215f83e
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c
         with:
           commit-message: "chore: increase Node.js version to ${{ steps.latest_version.outputs.value }}"
           branch: auto/upgrade-node-${{ steps.latest_version.outputs.short }}
