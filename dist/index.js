@@ -54860,7 +54860,7 @@ module.exports = parseParams
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
-// Axios v1.7.2 Copyright (c) 2024 Matt Zabriskie and contributors
+// Axios v1.7.3 Copyright (c) 2024 Matt Zabriskie and contributors
 
 
 const FormData$1 = __nccwpck_require__(4334);
@@ -55558,6 +55558,36 @@ const isAsyncFn = kindOfTest('AsyncFunction');
 const isThenable = (thing) =>
   thing && (isObject(thing) || isFunction(thing)) && isFunction(thing.then) && isFunction(thing.catch);
 
+// original code
+// https://github.com/DigitalBrainJS/AxiosPromise/blob/16deab13710ec09779922131f3fa5954320f83ab/lib/utils.js#L11-L34
+
+const _setImmediate = ((setImmediateSupported, postMessageSupported) => {
+  if (setImmediateSupported) {
+    return setImmediate;
+  }
+
+  return postMessageSupported ? ((token, callbacks) => {
+    _global.addEventListener("message", ({source, data}) => {
+      if (source === _global && data === token) {
+        callbacks.length && callbacks.shift()();
+      }
+    }, false);
+
+    return (cb) => {
+      callbacks.push(cb);
+      _global.postMessage(token, "*");
+    }
+  })(`axios@${Math.random()}`, []) : (cb) => setTimeout(cb);
+})(
+  typeof setImmediate === 'function',
+  isFunction(_global.postMessage)
+);
+
+const asap = typeof queueMicrotask !== 'undefined' ?
+  queueMicrotask.bind(_global) : ( typeof process !== 'undefined' && process.nextTick || _setImmediate);
+
+// *********************
+
 const utils$1 = {
   isArray,
   isArrayBuffer,
@@ -55613,7 +55643,9 @@ const utils$1 = {
   isSpecCompliantForm,
   toJSONObject,
   isAsyncFn,
-  isThenable
+  isThenable,
+  setImmediate: _setImmediate,
+  asap
 };
 
 /**
@@ -56897,7 +56929,7 @@ function buildFullPath(baseURL, requestedURL) {
   return requestedURL;
 }
 
-const VERSION = "1.7.2";
+const VERSION = "1.7.3";
 
 function parseProtocol(url) {
   const match = /^([-+\w]{1,25})(:?\/\/|:)/.exec(url);
@@ -56952,90 +56984,6 @@ function fromDataURI(uri, asBlob, options) {
   throw new AxiosError('Unsupported protocol ' + protocol, AxiosError.ERR_NOT_SUPPORT);
 }
 
-/**
- * Throttle decorator
- * @param {Function} fn
- * @param {Number} freq
- * @return {Function}
- */
-function throttle(fn, freq) {
-  let timestamp = 0;
-  const threshold = 1000 / freq;
-  let timer = null;
-  return function throttled() {
-    const force = this === true;
-
-    const now = Date.now();
-    if (force || now - timestamp > threshold) {
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
-      }
-      timestamp = now;
-      return fn.apply(null, arguments);
-    }
-    if (!timer) {
-      timer = setTimeout(() => {
-        timer = null;
-        timestamp = Date.now();
-        return fn.apply(null, arguments);
-      }, threshold - (now - timestamp));
-    }
-  };
-}
-
-/**
- * Calculate data maxRate
- * @param {Number} [samplesCount= 10]
- * @param {Number} [min= 1000]
- * @returns {Function}
- */
-function speedometer(samplesCount, min) {
-  samplesCount = samplesCount || 10;
-  const bytes = new Array(samplesCount);
-  const timestamps = new Array(samplesCount);
-  let head = 0;
-  let tail = 0;
-  let firstSampleTS;
-
-  min = min !== undefined ? min : 1000;
-
-  return function push(chunkLength) {
-    const now = Date.now();
-
-    const startedAt = timestamps[tail];
-
-    if (!firstSampleTS) {
-      firstSampleTS = now;
-    }
-
-    bytes[head] = chunkLength;
-    timestamps[head] = now;
-
-    let i = tail;
-    let bytesCount = 0;
-
-    while (i !== head) {
-      bytesCount += bytes[i++];
-      i = i % samplesCount;
-    }
-
-    head = (head + 1) % samplesCount;
-
-    if (head === tail) {
-      tail = (tail + 1) % samplesCount;
-    }
-
-    if (now - firstSampleTS < min) {
-      return;
-    }
-
-    const passed = startedAt && now - startedAt;
-
-    return passed ? Math.round(bytesCount * 1000 / passed) : undefined;
-  };
-}
-
 const kInternals = Symbol('internals');
 
 class AxiosTransformStream extends stream__default["default"].Transform{
@@ -57055,12 +57003,8 @@ class AxiosTransformStream extends stream__default["default"].Transform{
       readableHighWaterMark: options.chunkSize
     });
 
-    const self = this;
-
     const internals = this[kInternals] = {
-      length: options.length,
       timeWindow: options.timeWindow,
-      ticksRate: options.ticksRate,
       chunkSize: options.chunkSize,
       maxRate: options.maxRate,
       minChunkSize: options.minChunkSize,
@@ -57072,8 +57016,6 @@ class AxiosTransformStream extends stream__default["default"].Transform{
       onReadCallback: null
     };
 
-    const _speedometer = speedometer(internals.ticksRate * options.samplesCount, internals.timeWindow);
-
     this.on('newListener', event => {
       if (event === 'progress') {
         if (!internals.isCaptured) {
@@ -57081,39 +57023,6 @@ class AxiosTransformStream extends stream__default["default"].Transform{
         }
       }
     });
-
-    let bytesNotified = 0;
-
-    internals.updateProgress = throttle(function throttledHandler() {
-      const totalBytes = internals.length;
-      const bytesTransferred = internals.bytesSeen;
-      const progressBytes = bytesTransferred - bytesNotified;
-      if (!progressBytes || self.destroyed) return;
-
-      const rate = _speedometer(progressBytes);
-
-      bytesNotified = bytesTransferred;
-
-      process.nextTick(() => {
-        self.emit('progress', {
-          loaded: bytesTransferred,
-          total: totalBytes,
-          progress: totalBytes ? (bytesTransferred / totalBytes) : undefined,
-          bytes: progressBytes,
-          rate: rate ? rate : undefined,
-          estimated: rate && totalBytes && bytesTransferred <= totalBytes ?
-            (totalBytes - bytesTransferred) / rate : undefined,
-          lengthComputable: totalBytes != null
-        });
-      });
-    }, internals.ticksRate);
-
-    const onFinish = () => {
-      internals.updateProgress.call(true);
-    };
-
-    this.once('end', onFinish);
-    this.once('error', onFinish);
   }
 
   _read(size) {
@@ -57127,7 +57036,6 @@ class AxiosTransformStream extends stream__default["default"].Transform{
   }
 
   _transform(chunk, encoding, callback) {
-    const self = this;
     const internals = this[kInternals];
     const maxRate = internals.maxRate;
 
@@ -57139,16 +57047,14 @@ class AxiosTransformStream extends stream__default["default"].Transform{
     const bytesThreshold = (maxRate / divider);
     const minChunkSize = internals.minChunkSize !== false ? Math.max(internals.minChunkSize, bytesThreshold * 0.01) : 0;
 
-    function pushChunk(_chunk, _callback) {
+    const pushChunk = (_chunk, _callback) => {
       const bytes = Buffer.byteLength(_chunk);
       internals.bytesSeen += bytes;
       internals.bytes += bytes;
 
-      if (internals.isCaptured) {
-        internals.updateProgress();
-      }
+      internals.isCaptured && this.emit('progress', internals.bytesSeen);
 
-      if (self.push(_chunk)) {
+      if (this.push(_chunk)) {
         process.nextTick(_callback);
       } else {
         internals.onReadCallback = () => {
@@ -57156,7 +57062,7 @@ class AxiosTransformStream extends stream__default["default"].Transform{
           process.nextTick(_callback);
         };
       }
-    }
+    };
 
     const transformChunk = (_chunk, _callback) => {
       const chunkSize = Buffer.byteLength(_chunk);
@@ -57212,11 +57118,6 @@ class AxiosTransformStream extends stream__default["default"].Transform{
         callback(null);
       }
     });
-  }
-
-  setLength(length) {
-    this[kInternals].length = +length;
-    return this;
   }
 }
 
@@ -57385,6 +57286,142 @@ const callbackify = (fn, reducer) => {
 
 const callbackify$1 = callbackify;
 
+/**
+ * Calculate data maxRate
+ * @param {Number} [samplesCount= 10]
+ * @param {Number} [min= 1000]
+ * @returns {Function}
+ */
+function speedometer(samplesCount, min) {
+  samplesCount = samplesCount || 10;
+  const bytes = new Array(samplesCount);
+  const timestamps = new Array(samplesCount);
+  let head = 0;
+  let tail = 0;
+  let firstSampleTS;
+
+  min = min !== undefined ? min : 1000;
+
+  return function push(chunkLength) {
+    const now = Date.now();
+
+    const startedAt = timestamps[tail];
+
+    if (!firstSampleTS) {
+      firstSampleTS = now;
+    }
+
+    bytes[head] = chunkLength;
+    timestamps[head] = now;
+
+    let i = tail;
+    let bytesCount = 0;
+
+    while (i !== head) {
+      bytesCount += bytes[i++];
+      i = i % samplesCount;
+    }
+
+    head = (head + 1) % samplesCount;
+
+    if (head === tail) {
+      tail = (tail + 1) % samplesCount;
+    }
+
+    if (now - firstSampleTS < min) {
+      return;
+    }
+
+    const passed = startedAt && now - startedAt;
+
+    return passed ? Math.round(bytesCount * 1000 / passed) : undefined;
+  };
+}
+
+/**
+ * Throttle decorator
+ * @param {Function} fn
+ * @param {Number} freq
+ * @return {Function}
+ */
+function throttle(fn, freq) {
+  let timestamp = 0;
+  let threshold = 1000 / freq;
+  let lastArgs;
+  let timer;
+
+  const invoke = (args, now = Date.now()) => {
+    timestamp = now;
+    lastArgs = null;
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+    fn.apply(null, args);
+  };
+
+  const throttled = (...args) => {
+    const now = Date.now();
+    const passed = now - timestamp;
+    if ( passed >= threshold) {
+      invoke(args, now);
+    } else {
+      lastArgs = args;
+      if (!timer) {
+        timer = setTimeout(() => {
+          timer = null;
+          invoke(lastArgs);
+        }, threshold - passed);
+      }
+    }
+  };
+
+  const flush = () => lastArgs && invoke(lastArgs);
+
+  return [throttled, flush];
+}
+
+const progressEventReducer = (listener, isDownloadStream, freq = 3) => {
+  let bytesNotified = 0;
+  const _speedometer = speedometer(50, 250);
+
+  return throttle(e => {
+    const loaded = e.loaded;
+    const total = e.lengthComputable ? e.total : undefined;
+    const progressBytes = loaded - bytesNotified;
+    const rate = _speedometer(progressBytes);
+    const inRange = loaded <= total;
+
+    bytesNotified = loaded;
+
+    const data = {
+      loaded,
+      total,
+      progress: total ? (loaded / total) : undefined,
+      bytes: progressBytes,
+      rate: rate ? rate : undefined,
+      estimated: rate && total && inRange ? (total - loaded) / rate : undefined,
+      event: e,
+      lengthComputable: total != null,
+      [isDownloadStream ? 'download' : 'upload']: true
+    };
+
+    listener(data);
+  }, freq);
+};
+
+const progressEventDecorator = (total, throttled) => {
+  const lengthComputable = total != null;
+
+  return [(loaded) => throttled[0]({
+    lengthComputable,
+    total,
+    loaded
+  }), throttled[1]];
+};
+
+const asyncDecorator = (fn) => (...args) => utils$1.asap(() => fn(...args));
+
 const zlibOptions = {
   flush: zlib__default["default"].constants.Z_SYNC_FLUSH,
   finishFlush: zlib__default["default"].constants.Z_SYNC_FLUSH
@@ -57404,6 +57441,14 @@ const isHttps = /https:?/;
 const supportedProtocols = platform.protocols.map(protocol => {
   return protocol + ':';
 });
+
+const flushOnFinish = (stream, [throttled, flush]) => {
+  stream
+    .on('end', flush)
+    .on('error', flush);
+
+  return throttled;
+};
 
 /**
  * If the proxy or config beforeRedirects functions are defined, call them with the options
@@ -57638,8 +57683,7 @@ const httpAdapter = isHttpAdapterSupported && function httpAdapter(config) {
     // Only set header if it hasn't been set in config
     headers.set('User-Agent', 'axios/' + VERSION, false);
 
-    const onDownloadProgress = config.onDownloadProgress;
-    const onUploadProgress = config.onUploadProgress;
+    const {onUploadProgress, onDownloadProgress} = config;
     const maxRate = config.maxRate;
     let maxUploadRate = undefined;
     let maxDownloadRate = undefined;
@@ -57710,15 +57754,16 @@ const httpAdapter = isHttpAdapterSupported && function httpAdapter(config) {
       }
 
       data = stream__default["default"].pipeline([data, new AxiosTransformStream$1({
-        length: contentLength,
         maxRate: utils$1.toFiniteNumber(maxUploadRate)
       })], utils$1.noop);
 
-      onUploadProgress && data.on('progress', progress => {
-        onUploadProgress(Object.assign(progress, {
-          upload: true
-        }));
-      });
+      onUploadProgress && data.on('progress', flushOnFinish(
+        data,
+        progressEventDecorator(
+          contentLength,
+          progressEventReducer(asyncDecorator(onUploadProgress), false, 3)
+        )
+      ));
     }
 
     // HTTP basic authentication
@@ -57817,17 +57862,18 @@ const httpAdapter = isHttpAdapterSupported && function httpAdapter(config) {
 
       const responseLength = +res.headers['content-length'];
 
-      if (onDownloadProgress) {
+      if (onDownloadProgress || maxDownloadRate) {
         const transformStream = new AxiosTransformStream$1({
-          length: utils$1.toFiniteNumber(responseLength),
           maxRate: utils$1.toFiniteNumber(maxDownloadRate)
         });
 
-        onDownloadProgress && transformStream.on('progress', progress => {
-          onDownloadProgress(Object.assign(progress, {
-            download: true
-          }));
-        });
+        onDownloadProgress && transformStream.on('progress', flushOnFinish(
+          transformStream,
+          progressEventDecorator(
+            responseLength,
+            progressEventReducer(asyncDecorator(onDownloadProgress), true, 3)
+          )
+        ));
 
         streams.push(transformStream);
       }
@@ -58038,36 +58084,6 @@ const httpAdapter = isHttpAdapterSupported && function httpAdapter(config) {
       req.end(data);
     }
   });
-};
-
-const progressEventReducer = (listener, isDownloadStream, freq = 3) => {
-  let bytesNotified = 0;
-  const _speedometer = speedometer(50, 250);
-
-  return throttle(e => {
-    const loaded = e.loaded;
-    const total = e.lengthComputable ? e.total : undefined;
-    const progressBytes = loaded - bytesNotified;
-    const rate = _speedometer(progressBytes);
-    const inRange = loaded <= total;
-
-    bytesNotified = loaded;
-
-    const data = {
-      loaded,
-      total,
-      progress: total ? (loaded / total) : undefined,
-      bytes: progressBytes,
-      rate: rate ? rate : undefined,
-      estimated: rate && total && inRange ? (total - loaded) / rate : undefined,
-      event: e,
-      lengthComputable: total != null
-    };
-
-    data[isDownloadStream ? 'download' : 'upload'] = true;
-
-    listener(data);
-  }, freq);
 };
 
 const isURLSameOrigin = platform.hasStandardBrowserEnv ?
@@ -58329,16 +58345,18 @@ const xhrAdapter = isXHRAdapterSupported && function (config) {
     const _config = resolveConfig(config);
     let requestData = _config.data;
     const requestHeaders = AxiosHeaders$1.from(_config.headers).normalize();
-    let {responseType} = _config;
+    let {responseType, onUploadProgress, onDownloadProgress} = _config;
     let onCanceled;
-    function done() {
-      if (_config.cancelToken) {
-        _config.cancelToken.unsubscribe(onCanceled);
-      }
+    let uploadThrottled, downloadThrottled;
+    let flushUpload, flushDownload;
 
-      if (_config.signal) {
-        _config.signal.removeEventListener('abort', onCanceled);
-      }
+    function done() {
+      flushUpload && flushUpload(); // flush events
+      flushDownload && flushDownload(); // flush events
+
+      _config.cancelToken && _config.cancelToken.unsubscribe(onCanceled);
+
+      _config.signal && _config.signal.removeEventListener('abort', onCanceled);
     }
 
     let request = new XMLHttpRequest();
@@ -58408,7 +58426,7 @@ const xhrAdapter = isXHRAdapterSupported && function (config) {
         return;
       }
 
-      reject(new AxiosError('Request aborted', AxiosError.ECONNABORTED, _config, request));
+      reject(new AxiosError('Request aborted', AxiosError.ECONNABORTED, config, request));
 
       // Clean up request
       request = null;
@@ -58418,7 +58436,7 @@ const xhrAdapter = isXHRAdapterSupported && function (config) {
     request.onerror = function handleError() {
       // Real errors are hidden from us by the browser
       // onerror should only fire if it's a network error
-      reject(new AxiosError('Network Error', AxiosError.ERR_NETWORK, _config, request));
+      reject(new AxiosError('Network Error', AxiosError.ERR_NETWORK, config, request));
 
       // Clean up request
       request = null;
@@ -58434,7 +58452,7 @@ const xhrAdapter = isXHRAdapterSupported && function (config) {
       reject(new AxiosError(
         timeoutErrorMessage,
         transitional.clarifyTimeoutError ? AxiosError.ETIMEDOUT : AxiosError.ECONNABORTED,
-        _config,
+        config,
         request));
 
       // Clean up request
@@ -58462,13 +58480,18 @@ const xhrAdapter = isXHRAdapterSupported && function (config) {
     }
 
     // Handle progress if needed
-    if (typeof _config.onDownloadProgress === 'function') {
-      request.addEventListener('progress', progressEventReducer(_config.onDownloadProgress, true));
+    if (onDownloadProgress) {
+      ([downloadThrottled, flushDownload] = progressEventReducer(onDownloadProgress, true));
+      request.addEventListener('progress', downloadThrottled);
     }
 
     // Not all browsers support upload events
-    if (typeof _config.onUploadProgress === 'function' && request.upload) {
-      request.upload.addEventListener('progress', progressEventReducer(_config.onUploadProgress));
+    if (onUploadProgress && request.upload) {
+      ([uploadThrottled, flushUpload] = progressEventReducer(onUploadProgress));
+
+      request.upload.addEventListener('progress', uploadThrottled);
+
+      request.upload.addEventListener('loadend', flushUpload);
     }
 
     if (_config.cancelToken || _config.signal) {
@@ -58574,39 +58597,43 @@ const trackStream = (stream, chunkSize, onProgress, onFinish, encode) => {
   const iterator = readBytes(stream, chunkSize, encode);
 
   let bytes = 0;
+  let done;
+  let _onFinish = (e) => {
+    if (!done) {
+      done = true;
+      onFinish && onFinish(e);
+    }
+  };
 
   return new ReadableStream({
-    type: 'bytes',
-
     async pull(controller) {
-      const {done, value} = await iterator.next();
+      try {
+        const {done, value} = await iterator.next();
 
-      if (done) {
-        controller.close();
-        onFinish();
-        return;
+        if (done) {
+         _onFinish();
+          controller.close();
+          return;
+        }
+
+        let len = value.byteLength;
+        if (onProgress) {
+          let loadedBytes = bytes += len;
+          onProgress(loadedBytes);
+        }
+        controller.enqueue(new Uint8Array(value));
+      } catch (err) {
+        _onFinish(err);
+        throw err;
       }
-
-      let len = value.byteLength;
-      onProgress && onProgress(bytes += len);
-      controller.enqueue(new Uint8Array(value));
     },
     cancel(reason) {
-      onFinish(reason);
+      _onFinish(reason);
       return iterator.return();
     }
   }, {
     highWaterMark: 2
   })
-};
-
-const fetchProgressDecorator = (total, fn) => {
-  const lengthComputable = total != null;
-  return (loaded) => setTimeout(() => fn({
-    lengthComputable,
-    total,
-    loaded
-  }));
 };
 
 const isFetchSupported = typeof fetch === 'function' && typeof Request === 'function' && typeof Response === 'function';
@@ -58618,7 +58645,15 @@ const encodeText = isFetchSupported && (typeof TextEncoder === 'function' ?
     async (str) => new Uint8Array(await new Response(str).arrayBuffer())
 );
 
-const supportsRequestStream = isReadableStreamSupported && (() => {
+const test = (fn, ...args) => {
+  try {
+    return !!fn(...args);
+  } catch (e) {
+    return false
+  }
+};
+
+const supportsRequestStream = isReadableStreamSupported && test(() => {
   let duplexAccessed = false;
 
   const hasContentType = new Request(platform.origin, {
@@ -58631,17 +58666,13 @@ const supportsRequestStream = isReadableStreamSupported && (() => {
   }).headers.has('Content-Type');
 
   return duplexAccessed && !hasContentType;
-})();
+});
 
 const DEFAULT_CHUNK_SIZE = 64 * 1024;
 
-const supportsResponseStream = isReadableStreamSupported && !!(()=> {
-  try {
-    return utils$1.isReadableStream(new Response('').body);
-  } catch(err) {
-    // return undefined
-  }
-})();
+const supportsResponseStream = isReadableStreamSupported &&
+  test(() => utils$1.isReadableStream(new Response('').body));
+
 
 const resolvers = {
   stream: supportsResponseStream && ((res) => res.body)
@@ -58669,7 +58700,7 @@ const getBodyLength = async (body) => {
     return (await new Request(body).arrayBuffer()).byteLength;
   }
 
-  if(utils$1.isArrayBufferView(body)) {
+  if(utils$1.isArrayBufferView(body) || utils$1.isArrayBuffer(body)) {
     return body.byteLength;
   }
 
@@ -58739,15 +58770,17 @@ const fetchAdapter = isFetchSupported && (async (config) => {
       }
 
       if (_request.body) {
-        data = trackStream(_request.body, DEFAULT_CHUNK_SIZE, fetchProgressDecorator(
+        const [onProgress, flush] = progressEventDecorator(
           requestContentLength,
-          progressEventReducer(onUploadProgress)
-        ), null, encodeText);
+          progressEventReducer(asyncDecorator(onUploadProgress))
+        );
+
+        data = trackStream(_request.body, DEFAULT_CHUNK_SIZE, onProgress, flush, encodeText);
       }
     }
 
     if (!utils$1.isString(withCredentials)) {
-      withCredentials = withCredentials ? 'cors' : 'omit';
+      withCredentials = withCredentials ? 'include' : 'omit';
     }
 
     request = new Request(url, {
@@ -58757,7 +58790,7 @@ const fetchAdapter = isFetchSupported && (async (config) => {
       headers: headers.normalize().toJSON(),
       body: data,
       duplex: "half",
-      withCredentials
+      credentials: withCredentials
     });
 
     let response = await fetch(request);
@@ -58773,11 +58806,16 @@ const fetchAdapter = isFetchSupported && (async (config) => {
 
       const responseContentLength = utils$1.toFiniteNumber(response.headers.get('content-length'));
 
+      const [onProgress, flush] = onDownloadProgress && progressEventDecorator(
+        responseContentLength,
+        progressEventReducer(asyncDecorator(onDownloadProgress), true)
+      ) || [];
+
       response = new Response(
-        trackStream(response.body, DEFAULT_CHUNK_SIZE, onDownloadProgress && fetchProgressDecorator(
-          responseContentLength,
-          progressEventReducer(onDownloadProgress, true)
-        ), isStreamResponse && onFinish, encodeText),
+        trackStream(response.body, DEFAULT_CHUNK_SIZE, onProgress, () => {
+          flush && flush();
+          isStreamResponse && onFinish();
+        }, encodeText),
         options
       );
     }
