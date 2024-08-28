@@ -7,11 +7,11 @@ import { TerraformCdkActionProject } from "./projenrc";
 
 const githubActionPinnedVersions = {
   "actions/checkout": "692973e3d937129bcbf40652eb9f2f61becf3332", // v4.1.7
-  "actions/download-artifact": "65a9edc5881444af0b9093a5e628f2fe47ea3b2e", // v4.1.7
+  "actions/download-artifact": "fa0a91b85d4f404e444e00e005971372dc801d16", // v4.1.8
   "actions/github-script": "60a0d83039c74a4aee543508d2ffcb1c3799cdea", // v7.0.1
-  "actions/setup-node": "60edb5dd545a775178f52524783378180af0d1f8", // v4.0.2
+  "actions/setup-node": "1e60f620b9541d16bece96c5465dc8ee9832be0b", // v4.0.3
   "actions/stale": "28ca1036281a5e5922ead5184a1bbf96e5fc984e", // v9.0.0
-  "actions/upload-artifact": "65462800fd760344b1a7b4382951275a0abb4808", // v4.3.3
+  "actions/upload-artifact": "89ef406dd8d7e03cfd12d9e0a4a378f454709029", // v4.3.5
   "amannn/action-semantic-pull-request":
     "0723387faaf9b38adef4775cd42cfd5155ed6017", // v5.5.3
   "dessant/lock-threads": "1bf7ec25051fe7c00bdd17e6a7cf3d7bfb7dc771", // v5.0.1
