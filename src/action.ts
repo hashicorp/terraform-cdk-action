@@ -18,6 +18,17 @@ function hasTerraformChanges(output: string): Boolean {
   );
 }
 
+function truncateOutput(output: string): string {
+  // Github max comment length is 65536, but we want to leave room for the rest of the comment content
+  const maxOutputLength = 65000;
+  if (output.length > maxOutputLength) {
+    return `... Output truncated to the last ${maxOutputLength} characters ...\n\n${output.substring(
+      output.length - maxOutputLength
+    )}`;
+  }
+  return output;
+}
+
 function postComment(
   commentController: CommentController,
   title: string,
@@ -25,6 +36,7 @@ function postComment(
   output: string | undefined,
   outputTitle: Error | string
 ): Promise<void> {
+  output = output ? truncateOutput(output) : undefined;
   return commentController.postCommentOnPr(
     `### ${title}
 
@@ -129,6 +141,7 @@ export async function run(): Promise<void> {
     updateComment: input.updateComment,
     customNpxArgs: input.customNpxArgs,
     cdktfArgs: input.cdktfArgs,
+    suppressOutput: input.suppressOutput,
   };
   const octokit = github.getOctokit(inputs.githubToken);
   const commentController = new CommentController({
@@ -159,7 +172,7 @@ export async function run(): Promise<void> {
             commentController,
             "❌ Error synthesizing the Terraform CDK Application",
             undefined,
-            output,
+            inputs.suppressOutput ? undefined : output,
             error
           )
       );
@@ -180,14 +193,14 @@ export async function run(): Promise<void> {
                 commentController,
                 `✅ Successfully planned Terraform CDK Stack '${inputs.stackName}'`,
                 runUrl,
-                output,
+                inputs.suppressOutput ? undefined : output,
                 "Show Plan"
               )
             : postComment(
                 commentController,
                 `🟰 No changes in Terraform CDK Stack '${inputs.stackName}'`,
                 runUrl,
-                output,
+                inputs.suppressOutput ? undefined : output,
                 "Show Plan"
               ),
         (error, output, runUrl) =>
@@ -195,7 +208,7 @@ export async function run(): Promise<void> {
             commentController,
             `❌ Error planning Terraform CDK Stack '${inputs.stackName}'`,
             runUrl,
-            output,
+            inputs.suppressOutput ? undefined : output,
             error
           )
       );
@@ -216,14 +229,14 @@ export async function run(): Promise<void> {
                 commentController,
                 `✅ Successfully applied Terraform CDK Stack '${inputs.stackName}'`,
                 runUrl,
-                output,
+                inputs.suppressOutput ? undefined : output,
                 "Show Run"
               )
             : postComment(
                 commentController,
                 `🟰 No changes to apply in Terraform CDK Stack '${inputs.stackName}'`,
                 runUrl,
-                output,
+                inputs.suppressOutput ? undefined : output,
                 "Show Run"
               ),
         (error, output, runUrl) =>
@@ -231,7 +244,7 @@ export async function run(): Promise<void> {
             commentController,
             `❌ Error applying Terraform CDK Stack '${inputs.stackName}'`,
             runUrl,
-            output,
+            inputs.suppressOutput ? undefined : output,
             error
           )
       );
@@ -259,7 +272,7 @@ export async function run(): Promise<void> {
             commentController,
             `❌ Error destroying the Terraform CDK Application '${inputs.stackName}'`,
             undefined,
-            output,
+            inputs.suppressOutput ? undefined : output,
             error
           )
       );
