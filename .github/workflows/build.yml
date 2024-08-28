@@ -36,12 +36,14 @@ jobs:
         run: |-
           git add .
           git diff --staged --patch --exit-code > .repo.patch || echo "self_mutation_happened=true" >> $GITHUB_OUTPUT
+        working-directory: ./
       - name: Upload patch
         if: steps.self_mutation.outputs.self_mutation_happened
         uses: actions/upload-artifact@89ef406dd8d7e03cfd12d9e0a4a378f454709029
         with:
           name: .repo.patch
           path: .repo.patch
+          overwrite: true
       - name: Fail build on mutation
         if: steps.self_mutation.outputs.self_mutation_happened
         run: |-
