@@ -33,8 +33,9 @@ export class UpgradeNode {
       },
     });
 
-    (autoWorkflow.concurrency as any) =
-      "${{ github.workflow }}-${{ github.ref }}";
+    (autoWorkflow.concurrency as any) = {
+      group: "${{ github.workflow }}-${{ github.ref }}",
+    };
 
     const commonSteps: JobStep[] = [
       {
