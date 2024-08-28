@@ -1,6 +1,14 @@
 {
   "dependencies": [
     {
+      "name": "@action-validator/cli",
+      "type": "build"
+    },
+    {
+      "name": "@action-validator/core",
+      "type": "build"
+    },
+    {
       "name": "@types/fs-extra",
       "type": "build"
     },
@@ -15,12 +23,12 @@
     },
     {
       "name": "@typescript-eslint/eslint-plugin",
-      "version": "^6",
+      "version": "^7",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/parser",
-      "version": "^6",
+      "version": "^7",
       "type": "build"
     },
     {
@@ -67,11 +75,6 @@
       "type": "build"
     },
     {
-      "name": "npm-check-updates",
-      "version": "^16",
-      "type": "build"
-    },
-    {
       "name": "prettier",
       "type": "build"
     },
@@ -81,7 +84,7 @@
     },
     {
       "name": "projen-github-action-typescript",
-      "version": "^0.0.395",
+      "version": "^0.0",
       "type": "build"
     },
     {
