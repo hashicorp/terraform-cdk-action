@@ -18,17 +18,6 @@ function hasTerraformChanges(output: string): Boolean {
   );
 }
 
-function truncateOutput(output: string): string {
-  // Github max comment length is 65536, but we want to leave room for the rest of the comment content
-  const maxOutputLength = 65000;
-  if (output.length > maxOutputLength) {
-    return `... Output truncated to the last ${maxOutputLength} characters ...\n\n${output.substring(
-      output.length - maxOutputLength
-    )}`;
-  }
-  return output;
-}
-
 function postComment(
   commentController: CommentController,
   title: string,
@@ -36,7 +25,7 @@ function postComment(
   output: string | undefined,
   outputTitle: Error | string
 ): Promise<void> {
-  output = output ? truncateOutput(output) : undefined;
+  output = output ? commentController.truncateOutput(output) : undefined;
   return commentController.postCommentOnPr(
     `### ${title}
 

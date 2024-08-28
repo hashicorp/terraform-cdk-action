@@ -130,6 +130,17 @@ export class CommentController {
 
     return !previousComment ? null : previousComment;
   }
+
+  public truncateOutput(output: string): string {
+    // Github max comment length is 65536, but we want to leave room for the rest of the comment content
+    const maxOutputLength = 65000;
+    if (output.length > maxOutputLength) {
+      return `... Output truncated to the last ${maxOutputLength} characters ...\n\n${output.substring(
+        output.length - maxOutputLength
+      )}`;
+    }
+    return output;
+  }
 }
 const hashString = (str: string) => {
   return crypto.createHash("md5").update(str).digest("hex");
