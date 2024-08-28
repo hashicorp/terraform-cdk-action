@@ -116,7 +116,8 @@ export class TerraformCdkActionProject extends GitHubActionTypeScriptProject {
         "@hashicorp/js-releases@^1.7.0",
       ],
       devDeps: [
-        "projen-github-action-typescript@^0.0.395",
+        "projen-github-action-typescript@^0.0",
+        "projen@^0.85.0",
         "@types/fs-extra",
         "action-docs",
         "@action-validator/core",
