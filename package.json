@@ -22,6 +22,7 @@
     "test:watch": "npx projen test:watch",
     "unbump": "npx projen unbump",
     "upgrade": "npx projen upgrade",
+    "validate-workflows": "npx projen validate-workflows",
     "watch": "npx projen watch",
     "projen": "npx projen"
   },
@@ -31,6 +32,8 @@
     "organization": true
   },
   "devDependencies": {
+    "@action-validator/cli": "^0.6.0",
+    "@action-validator/core": "^0.6.0",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29",
     "@types/node": "^20",
