@@ -2,6 +2,18 @@
 # yarn lockfile v1
 
 
+"@action-validator/cli@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@action-validator/cli/-/cli-0.6.0.tgz#02a29e322d3794903896183281eed2b55c685851"
+  integrity sha512-Z8TYOK4GqUIpI0UuspUJPB6dhr0niTumhwI5iiZVqFRXm4u05bZawnFKltpvoFUfJg9mHbbIBlleqsRJAgl53Q==
+  dependencies:
+    chalk "5.2.0"
+
+"@action-validator/core@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@action-validator/core/-/core-0.6.0.tgz#8fbaf45562a5377140815b79cc1ac9f610ff63e5"
+  integrity sha512-tPglwCr8Mm8SWzwnVewwFmqRx91F0WvMsM0BRAqH4CLalyGndm53Xvp+UcUSzswpk1wkjIDYI7RyEhWMLyPkig==
+
 "@actions/core@^1.10.1", "@actions/core@^1.2.6":
   version "1.10.1"
   resolved "https://registry.yarnpkg.com/@actions/core/-/core-1.10.1.tgz#61108e7ac40acae95ee36da074fa5850ca4ced8a"
@@ -1802,6 +1814,11 @@ case@^1.6.3:
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
+
+chalk@5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-5.2.0.tgz#249623b7d66869c673699fb66d65723e54dfcfb3"
+  integrity sha512-ree3Gqw/nazQAPuJJEy+avdl7QfZMcUvmHIKgEZkGL+xOBzRvup5Hxo6LHuMceSxOabuJLJm5Yp/92R9eMmMvA==
 
 chalk@^2.4.2:
   version "2.4.2"
