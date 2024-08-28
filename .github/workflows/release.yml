@@ -28,7 +28,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
       - name: Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b
         with:
           node-version: 20.9.0
       - name: Install dependencies
@@ -44,7 +44,7 @@ jobs:
         continue-on-error: true
       - name: Upload artifact
         if: ${{ steps.git_remote.outputs.latest_commit == github.sha }}
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+        uses: actions/upload-artifact@89ef406dd8d7e03cfd12d9e0a4a378f454709029
         with:
           name: build-artifact
           path: dist
@@ -56,11 +56,11 @@ jobs:
       contents: write
     if: needs.release.outputs.latest_commit == github.sha
     steps:
-      - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8
+      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b
         with:
           node-version: 20.9.0
       - name: Download build artifacts
-        uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
         with:
           name: build-artifact
           path: dist
