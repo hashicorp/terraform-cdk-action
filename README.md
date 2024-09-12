@@ -18,6 +18,7 @@ The Terraform CDK GitHub Action allows you to run CDKTF as part of your CI/CD wo
 | updateComment | Whether to update the last comment on the PR rather than adding a new comment | `false` | true |
 | customNpxArgs | The additional CLI arguments to pass to npx as part of the cdktf-cli execution. | `false` |  |
 | cdktfArgs | The additional CLI arguments to pass to cdktf as part of the cdktf-cli execution. | `false` |  |
+| suppressOutput | Whether to suppress the output of the action in the PR comment (expects `commentOnPr: true`) | `false` | `false` |
 <!-- action-docs-inputs -->
 
 ## Example Configurations
