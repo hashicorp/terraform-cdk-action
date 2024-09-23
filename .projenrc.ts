@@ -89,6 +89,12 @@ const inputs = {
     required: false,
     type: "string",
   },
+  suppressOutput: {
+    description: "Whether to suppress the output of the action in PR comments",
+    default: "false",
+    required: false,
+    type: "boolean",
+  },
 };
 
 const repoName = "terraform-cdk-action";
