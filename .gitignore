@@ -29,6 +29,7 @@ jspm_packages/
 *.tgz
 .yarn-integrity
 .cache
+!/.projenrc.js
 /test-reports/
 junit.xml
 /coverage/
@@ -55,4 +56,3 @@ junit.xml
 !/.github/workflows/upgrade-node-manually.yml
 !/.github/workflows/upgrade-terraform.yml
 !/src/inputs.ts
-!/.projenrc.ts

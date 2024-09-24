@@ -32,15 +32,14 @@
         "CHANGELOG": "dist/changelog.md",
         "BUMPFILE": "dist/version.txt",
         "RELEASETAG": "dist/releasetag.txt",
-        "RELEASE_TAG_PREFIX": "",
-        "BUMP_PACKAGE": "commit-and-tag-version@^12"
+        "RELEASE_TAG_PREFIX": ""
       },
       "steps": [
         {
           "builtin": "release/bump-version"
         }
       ],
-      "condition": "git log --oneline -1 | grep -qv \"chore(release):\""
+      "condition": "! git log --oneline -1 | grep -q \"chore(release):\""
     },
     "clobber": {
       "name": "clobber",
@@ -109,8 +108,7 @@
       "description": "Runs eslint against the codebase",
       "steps": [
         {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ src test build-tools projenrc .projenrc.ts",
-          "receiveArgs": true
+          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src test build-tools projenrc .projenrc.ts"
         }
       ]
     },
@@ -191,7 +189,7 @@
       "description": "Run tests",
       "steps": [
         {
-          "exec": "jest --passWithNoTests --updateSnapshot",
+          "exec": "jest --passWithNoTests --coverageProvider=v8 --updateSnapshot",
           "receiveArgs": true
         },
         {
@@ -216,8 +214,7 @@
         "CHANGELOG": "dist/changelog.md",
         "BUMPFILE": "dist/version.txt",
         "RELEASETAG": "dist/releasetag.txt",
-        "RELEASE_TAG_PREFIX": "",
-        "BUMP_PACKAGE": "commit-and-tag-version@^12"
+        "RELEASE_TAG_PREFIX": ""
       },
       "steps": [
         {
@@ -233,13 +230,16 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@action-validator/cli,@action-validator/core,@types/fs-extra,@types/jest,@vercel/ncc,action-docs,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,jest,prettier,projen,ts-jest,ts-node,typescript,@actions/core,@actions/exec,@actions/github,@actions/io,@actions/tool-cache"
+          "exec": "yarn upgrade npm-check-updates"
+        },
+        {
+          "exec": "npm-check-updates --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@action-validator/cli,@action-validator/core,@types/fs-extra,@types/jest,@types/node,@typescript-eslint/eslint-plugin,@typescript-eslint/parser,@vercel/ncc,action-docs,constructs,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,eslint,jest,jest-junit,npm-check-updates,prettier,projen,projen-github-action-typescript,standard-version,ts-jest,ts-node,typescript,@actions/core,@actions/exec,@actions/github,@actions/io,@actions/tool-cache,@hashicorp/js-releases"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @action-validator/cli @action-validator/core @types/fs-extra @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser @vercel/ncc action-docs commit-and-tag-version constructs eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest jest-junit prettier projen projen-github-action-typescript ts-jest ts-node typescript @actions/core @actions/exec @actions/github @actions/io @actions/tool-cache @hashicorp/js-releases"
+          "exec": "yarn upgrade @action-validator/cli @action-validator/core @types/fs-extra @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser @vercel/ncc action-docs constructs eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest jest-junit npm-check-updates prettier projen projen-github-action-typescript standard-version ts-jest ts-node typescript @actions/core @actions/exec @actions/github @actions/io @actions/tool-cache @hashicorp/js-releases"
         },
         {
           "exec": "npx projen"

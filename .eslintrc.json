@@ -7,7 +7,8 @@
   "root": true,
   "plugins": [
     "@typescript-eslint",
-    "import"
+    "import",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -17,6 +18,7 @@
   },
   "extends": [
     "plugin:import/typescript",
+    "prettier",
     "plugin:prettier/recommended"
   ],
   "settings": {
@@ -45,6 +47,9 @@
     "!projenrc/**/*.ts"
   ],
   "rules": {
+    "prettier/prettier": [
+      "error"
+    ],
     "@typescript-eslint/no-require-imports": [
       "error"
     ],
@@ -77,7 +82,7 @@
         }
       }
     ],
-    "import/no-duplicates": [
+    "no-duplicate-imports": [
       "error"
     ],
     "no-shadow": [

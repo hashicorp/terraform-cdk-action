@@ -51,6 +51,6 @@ inputs:
     default: ""
     required: false
   suppressOutput:
-    description: Whether to suppress the output of the plan / status on the PR comment (useful for large plans)
+    description: Whether to suppress the output of the action in PR comments
     default: "false"
     required: false
