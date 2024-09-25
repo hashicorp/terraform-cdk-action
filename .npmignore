@@ -6,6 +6,8 @@ junit.xml
 permissions-backup.acl
 /dist/changelog.md
 /dist/version.txt
+/.prettierignore
+/.prettierrc.json
 /test/
 /tsconfig.dev.json
 /src/
@@ -23,5 +25,7 @@ tsconfig.tsbuildinfo
 scripts
 examples
 projenrc
-/.projenrc.ts
 .copywrite.hcl
+/.gitattributes
+/.projenrc.ts
+/projenrc
