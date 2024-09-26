@@ -16,4 +16,5 @@ export interface Inputs {
   updateComment: boolean;
   customNpxArgs: string;
   cdktfArgs: string;
+  suppressOutput: boolean;
 }

@@ -50,3 +50,7 @@ inputs:
     description: The additional CLI arguments to pass to cdktf as part of the cdktf-cli execution.
     default: ""
     required: false
+  suppressOutput:
+    description: Whether to suppress the output of the action in PR comments
+    default: "false"
+    required: false

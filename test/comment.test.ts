@@ -42,6 +42,7 @@ describe("comment", () => {
     updateComment: true,
     customNpxArgs: "",
     cdktfArgs: "",
+    suppressOutput: false,
   };
 
   const pullRequestData = {
@@ -177,6 +178,60 @@ describe("comment", () => {
         comment_id: commentDataWithTag[1].id,
       });
       expect(createComment).not.toBeCalled();
+    });
+
+    it("should successfully truncate comment if it exceeds the limit", async () => {
+      const maxOutputLength = 65536;
+      const commentController = new CommentController({
+        inputs: defaultInput,
+        context,
+        octokit,
+      });
+      const commentBody = `${"a".repeat(maxOutputLength + 1)}\nlong-message`;
+      const truncatedBody = commentController.truncateOutput(commentBody);
+      const expectedBody = `<!-- terraform cdk action for options with hash ${hash} -->\n${truncatedBody}`;
+      const actual = await commentController.postCommentOnPr(truncatedBody);
+      expect(actual).toBeUndefined();
+      expect(createComment).not.toBeCalled();
+      expect(updateComment).toBeCalledWith({
+        body: expectedBody,
+        comment_id: "comment_id_2",
+      });
+      expect(expectedBody.length).toBeLessThanOrEqual(65536);
+    });
+
+    it("should not truncate comment if it does not exceed the limit", async () => {
+      const commentController = new CommentController({
+        inputs: defaultInput,
+        context,
+        octokit,
+      });
+      const commentBody = "short-message";
+      const truncatedBody = commentController.truncateOutput(commentBody);
+      const expectedBody = `<!-- terraform cdk action for options with hash ${hash} -->\n${truncatedBody}`;
+      const actual = await commentController.postCommentOnPr(truncatedBody);
+      expect(actual).toBeUndefined();
+      expect(createComment).not.toBeCalled();
+      expect(updateComment).toBeCalledWith({
+        body: expectedBody,
+        comment_id: "comment_id_2",
+      });
+      expect(expectedBody.length).toBeLessThanOrEqual(65536);
+    });
+
+    it("should omit output in comment if suppressOutput is true", async () => {
+      const commentController = new CommentController({
+        inputs: { ...defaultInput, suppressOutput: true },
+        context,
+        octokit,
+      });
+      const actual = await commentController.postCommentOnPr("some-message");
+      expect(actual).toBeUndefined();
+      expect(createComment).not.toBeCalled();
+      expect(updateComment).toBeCalledWith({
+        body: `<!-- terraform cdk action for options with hash ${hash} -->\nsome-message`,
+        comment_id: "comment_id_2",
+      });
     });
 
     it("should get pull_number via API if not running on PR", async () => {
