@@ -42,7 +42,7 @@
     "@vercel/ncc": "^0.38.3",
     "action-docs": "^1.2.0",
     "commit-and-tag-version": "^12",
-    "constructs": "10.0.0",
+    "constructs": "10.3.0",
     "eslint": "^9",
     "eslint-config-prettier": "^8.10.0",
     "eslint-import-resolver-typescript": "^3.7.0",
@@ -58,7 +58,7 @@
     "typescript": "~5.7.2"
   },
   "peerDependencies": {
-    "constructs": "^10.0.0"
+    "constructs": "^10.3.0"
   },
   "dependencies": {
     "@actions/core": "^1.11.1",

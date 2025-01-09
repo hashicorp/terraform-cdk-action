@@ -45,6 +45,7 @@ export interface TerraformCdkActionOptions
 export class TerraformCdkActionProject extends GitHubActionTypeScriptProject {
   constructor(options: TerraformCdkActionOptions) {
     const { name, description, inputs, metadata } = options;
+    const constructsVersion = "10.3.0";
 
     super({
       name: name ?? "terraform-cdk-action",
@@ -123,7 +124,7 @@ export class TerraformCdkActionProject extends GitHubActionTypeScriptProject {
         "@action-validator/core",
         "@action-validator/cli",
       ],
-      peerDeps: ["constructs@^10.0.0"],
+      peerDeps: [`constructs@^${constructsVersion}`],
       minNodeVersion: "20.9.0",
     });
 
