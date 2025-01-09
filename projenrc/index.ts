@@ -70,7 +70,7 @@ export class TerraformCdkActionProject extends GitHubActionTypeScriptProject {
         name: "team-tf-cdk",
         email: "github-team-tf-cdk@hashicorp.com",
       },
-      stale: false, // disabling for now but keeping the options below so we can turn it back on if desired
+      stale: true,
       staleOptions: {
         issues: {
           exemptLabels: ["backlog", "help wanted"],
