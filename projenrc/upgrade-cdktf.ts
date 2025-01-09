@@ -138,6 +138,7 @@ export class UpgradeCDKTF {
                 "This PR increases the default version of CDKTF used from `${{ steps.current_version.outputs.value }}` to version `${{ steps.latest_version.outputs.value }}`.",
                 "This is not considered a breaking change because it's just a patch release that shouldn't have any backwards incompatibilities.",
               ].join("\n"),
+              labels: "automerge,dependencies,auto-approve",
             },
           },
         ],
