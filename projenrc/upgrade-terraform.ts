@@ -129,14 +129,7 @@ export class UpgradeTerraform {
               body: [
                 "This PR increases the default version of Terraform used from `${{ steps.current_version.outputs.value }}` to version `${{ steps.latest_version.outputs.value }}`.",
                 "This is considered a breaking change because anyone who does not manually specify a `terraformVersion` in their action configuration will automatically start using the new version.",
-                " ",
-                "Unfortunately, not everything can be automated, and the following steps need to be completed manually:",
-                " ",
-                "- [ ] Update the _Terraform Version_ to `${{ steps.latest_version.outputs.value }}` in the TFC web UI for the [cdk-action-testing](https://app.terraform.io/app/cdktf/workspaces/cdk-action-testing/settings/general) workspace",
-                " ",
-                "Please complete the above steps and then mark this PR as ready for review to rerun the checks. Thanks!",
               ].join("\n"),
-              draft: true,
             },
           },
           {
@@ -153,6 +146,7 @@ export class UpgradeTerraform {
                 "This PR increases the default version of Terraform used from `${{ steps.current_version.outputs.value }}` to version `${{ steps.latest_version.outputs.value }}`.",
                 "This is not considered a breaking change because it's just a patch release that shouldn't have any backwards incompatibilities.",
               ].join("\n"),
+              labels: "automerge,dependencies,auto-approve",
             },
           },
         ],

@@ -79,7 +79,7 @@ jobs:
         with:
           branch: auto/upgrade-cdktf-${{ steps.latest_version.outputs.minor }}
           base: main
-          labels: automerge,dependencies
+          labels: automerge,dependencies,auto-approve
           token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
           author: team-tf-cdk <github-team-tf-cdk@hashicorp.com>
           committer: team-tf-cdk <github-team-tf-cdk@hashicorp.com>
