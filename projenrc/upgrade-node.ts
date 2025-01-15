@@ -3,109 +3,78 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import { typescript } from "projen";
-import { JobPermission, JobStep } from "projen/lib/github/workflows-model";
+import { javascript } from "projen";
+import { JobPermission } from "projen/lib/github/workflows-model";
+import { generateRandomCron } from "./util/random-cron";
 
 /**
  * Auto-updates Node to the next LTS version a month before the previous one goes EOL
+ * Can also be triggered manually with a hard-coded version of Node.js as input
  */
 export class UpgradeNode {
-  constructor(project: typescript.TypeScriptProject) {
-    const autoWorkflow = project.github?.addWorkflow("upgrade-node");
-    const manualWorkflow = project.github?.addWorkflow("upgrade-node-manually");
+  constructor(project: javascript.NodeProject) {
+    const workflow = project.github?.addWorkflow("upgrade-node");
 
-    if (!autoWorkflow) throw new Error("no workflow defined");
-    if (!manualWorkflow) throw new Error("no workflow defined");
+    if (!workflow) throw new Error("no workflow defined");
 
-    autoWorkflow.on({
-      schedule: [{ cron: "13 7 * * *" }], // Runs once a day
-      workflowDispatch: {}, // allow manual triggering
-    });
-    manualWorkflow.on({
+    workflow.on({
+      schedule: [
+        { cron: generateRandomCron({ project, maxHour: 4, hourOffset: 6 }) },
+      ], // runs once a day
       workflowDispatch: {
         inputs: {
           version: {
-            description: "Node.js version to upgrade to, in format: 12.34.56",
-            required: true,
+            description:
+              "Node.js version to upgrade to, in the format: 12.34.56",
+            required: false,
             type: "string",
           },
         },
       },
     });
 
-    (autoWorkflow.concurrency as any) = {
+    (workflow.concurrency as any) = {
       group: "${{ github.workflow }}-${{ github.ref }}",
     };
 
-    const commonSteps: JobStep[] = [
-      {
-        name: "Checkout",
-        uses: "actions/checkout@v4",
-      },
-      {
-        name: "Setup Node.js",
-        uses: "actions/setup-node@v4",
-        with: {
-          "node-version": project.minNodeVersion,
-        },
-      },
-      {
-        name: "Install",
-        run: "yarn install",
-      },
-      {
-        name: "Get current Node.js version",
-        id: "current_version",
-        run: [
-          `ENGINES_NODE_VERSION=$(npm pkg get engines.node | tr -d '"')`,
-          `CURRENT_VERSION=$(cut -d " " -f 2 <<< "$ENGINES_NODE_VERSION")`,
-          `CURRENT_VERSION_SHORT=$(cut -d "." -f 1 <<< "$CURRENT_VERSION")`,
-          `echo "CURRENT_NODEJS_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV`,
-          `echo "CURRENT_NODEJS_VERSION_SHORT=$CURRENT_VERSION_SHORT" >> $GITHUB_ENV`,
-          `echo "value=$CURRENT_VERSION" >> $GITHUB_OUTPUT`,
-          `echo "short=$CURRENT_VERSION_SHORT" >> $GITHUB_OUTPUT`,
-        ].join("\n"),
-      },
-    ];
-    const createPRstep: JobStep = {
-      name: "Create Pull Request",
-      uses: "peter-evans/create-pull-request@v3",
-      with: {
-        "commit-message":
-          "chore: increase Node.js version to ${{ steps.latest_version.outputs.value }}",
-        branch: "auto/upgrade-node-${{ steps.latest_version.outputs.short }}",
-        base: "main",
-        title:
-          "chore: increase Node.js version to ${{ steps.latest_version.outputs.value }}",
-        body: [
-          "This PR initiates the upgrade of Node.js from `v${{ steps.current_version.outputs.value }}` to `v${{ steps.latest_version.outputs.value }}`.",
-          "Unfortunately, not everything can be automated, and the following steps need to be completed manually:",
-          " ",
-          "- [ ] Check if the `RunsUsing` value should be updated [here](https://github.com/hashicorp/terraform-cdk-action/blob/8b74e0c471bd6eb9ea8869f1a73de83b7129717e/.projenrc.ts#L164). Check [here](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) for supported options.",
-          "    - Note that the GitHub Actions runners don't automatically support every LTS version - sometimes they skip one.",
-          "- [ ] Run `npx projen build`",
-          " ",
-          "Please checkout this PR, complete the above steps, push the changes to this branch, and then mark this PR as ready for review to complete the upgrade. Thanks!",
-        ].join("\n"),
-        labels: "automerge,automated,security",
-        token: "${{ secrets.PROJEN_GITHUB_TOKEN }}",
-        author: "team-tf-cdk <github-team-tf-cdk@hashicorp.com>",
-        committer: "team-tf-cdk <github-team-tf-cdk@hashicorp.com>",
-        signoff: true,
-        "delete-branch": true,
-        draft: true,
-      },
-    };
-
-    autoWorkflow.addJobs({
-      upgrade: {
-        name: "Upgrade Node.js",
+    workflow.addJobs({
+      version: {
+        name: "Determine version to upgrade to",
         runsOn: ["ubuntu-latest"],
         steps: [
-          ...commonSteps,
+          {
+            name: "Checkout",
+            uses: "actions/checkout",
+          },
+          {
+            name: "Setup Node.js",
+            uses: "actions/setup-node",
+            with: {
+              "node-version": project.minNodeVersion,
+            },
+          },
+          {
+            name: "Install",
+            run: "yarn install",
+          },
+          {
+            name: "Get current Node.js version",
+            id: "current_version",
+            run: [
+              `ENGINES_NODE_VERSION=$(npm pkg get engines.node | tr -d '"')`,
+              `CURRENT_VERSION=$(cut -d " " -f 2 <<< "$ENGINES_NODE_VERSION")`,
+              `CURRENT_VERSION_MAJOR=$(cut -d "." -f 1 <<< "$CURRENT_VERSION")`,
+              `CURRENT_VERSION_MINOR=$(cut -d "." -f 2 <<< "$CURRENT_VERSION")`,
+              `echo "CURRENT_NODEJS_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV`,
+              `echo "CURRENT_NODEJS_VERSION_MAJOR=$CURRENT_VERSION_MAJOR" >> $GITHUB_ENV`,
+              `echo "CURRENT_NODEJS_VERSION_MINOR=$CURRENT_VERSION_MINOR" >> $GITHUB_ENV`,
+              `echo "value=$CURRENT_VERSION" >> $GITHUB_OUTPUT`,
+            ].join("\n"),
+          },
           {
             name: "Get the earliest supported Node.js version whose EOL date is at least a month away",
-            uses: "actions/github-script@v7",
+            if: "${{ ! inputs.version }}",
+            uses: "actions/github-script",
             with: {
               script: [
                 `const script = require('./scripts/check-node-versions.js')`,
@@ -114,58 +83,108 @@ export class UpgradeNode {
             },
           },
           {
-            name: "Run upgrade script",
-            if: "env.CURRENT_NODEJS_VERSION_SHORT < env.NEW_NODEJS_VERSION_SHORT",
-            run: "scripts/update-node.sh $NEW_NODEJS_VERSION",
-          },
-          {
-            name: "Get values for pull request",
-            id: "latest_version",
-            if: "env.CURRENT_NODEJS_VERSION_SHORT < env.NEW_NODEJS_VERSION_SHORT",
+            // In an ideal world this is where we'd validate that the manually-input version actually exists
+            // In practice, I couldn't figure out how to do this properly and it wasn't worth the effort
+            name: "Save the manually-input version to environment variables for comparison",
+            if: "${{ inputs.version }}",
+            env: {
+              NEW_VERSION: "${{ inputs.version }}",
+            },
             run: [
-              `echo "value=$NEW_NODEJS_VERSION" >> $GITHUB_OUTPUT`,
-              `echo "short=$NEW_NODEJS_VERSION_SHORT" >> $GITHUB_OUTPUT`,
+              `NEW_VERSION_MAJOR=$(cut -d "." -f 1 <<< "$NEW_VERSION")`,
+              `NEW_VERSION_MINOR=$(cut -d "." -f 2 <<< "$NEW_VERSION")`,
+              `echo "NEW_NODEJS_VERSION=$NEW_VERSION" >> $GITHUB_ENV`,
+              `echo "NEW_NODEJS_VERSION_MAJOR=$NEW_VERSION_MAJOR" >> $GITHUB_ENV`,
+              `echo "NEW_NODEJS_VERSION_MINOR=$NEW_VERSION_MINOR" >> $GITHUB_ENV`,
             ].join("\n"),
           },
-          createPRstep,
+          {
+            name: "Output env variables for use in the next job",
+            id: "latest_version",
+            run: [
+              `echo "value=$NEW_NODEJS_VERSION" >> $GITHUB_OUTPUT`,
+              `echo "major=$NEW_NODEJS_VERSION_MAJOR" >> $GITHUB_OUTPUT`,
+              `[[ "$NEW_NODEJS_VERSION_MAJOR" > "$CURRENT_NODEJS_VERSION_MAJOR" || ("$NEW_NODEJS_VERSION_MAJOR" == "$CURRENT_NODEJS_VERSION_MAJOR" && "$NEW_NODEJS_VERSION_MINOR" > "$CURRENT_NODEJS_VERSION_MINOR") ]] && IS_NEWER=true`,
+              `echo "is_newer=$IS_NEWER" >> $GITHUB_OUTPUT`,
+            ].join("\n"),
+          },
         ],
-        env: {
-          CI: "true",
-          CHECKPOINT_DISABLE: "1",
+        outputs: {
+          current: {
+            stepId: "current_version",
+            outputName: "value",
+          },
+          latest: {
+            stepId: "latest_version",
+            outputName: "value",
+          },
+          major: {
+            stepId: "latest_version",
+            outputName: "major",
+          },
+          should_upgrade: {
+            stepId: "latest_version",
+            outputName: "is_newer",
+          },
         },
         permissions: {
           contents: JobPermission.READ,
         },
       },
-    });
-
-    manualWorkflow.addJobs({
       upgrade: {
-        name: "Upgrade Node.js to a specified version",
+        name: "Upgrade Node.js",
         runsOn: ["ubuntu-latest"],
+        needs: ["version"],
+        if: "always() && needs.version.outputs.should_upgrade",
         steps: [
-          ...commonSteps,
           {
-            name: "Parse desired new version",
-            id: "latest_version",
-            run: [
-              `NEW_VERSION_SHORT=$(cut -d "." -f 1 <<< "$NEW_VERSION")`,
-              `echo "NEW_NODEJS_VERSION=$NEW_VERSION" >> $GITHUB_ENV`,
-              `echo "NEW_NODEJS_VERSION_SHORT=$NEW_VERSION_SHORT" >> $GITHUB_ENV`,
-              `echo "value=$NEW_VERSION" >> $GITHUB_OUTPUT`,
-              `echo "short=$NEW_VERSION_SHORT" >> $GITHUB_OUTPUT`,
-            ].join("\n"),
-            env: {
-              NEW_VERSION: "${{ inputs.version }}",
+            name: "Checkout",
+            uses: "actions/checkout",
+          },
+          {
+            name: "Setup Node.js",
+            uses: "actions/setup-node",
+            with: {
+              "node-version": "${{ needs.version.outputs.latest }}",
             },
           },
-          // @TODO should we try to validate that this new version actually exists...?
+          {
+            name: "Install",
+            run: "yarn install",
+          },
           {
             name: "Run upgrade script",
-            if: "env.CURRENT_NODEJS_VERSION != env.NEW_NODEJS_VERSION",
-            run: "scripts/update-node.sh $NEW_NODEJS_VERSION",
+            run: "scripts/update-node.sh ${{ needs.version.outputs.latest }}",
           },
-          createPRstep,
+          {
+            name: "Create Pull Request",
+            uses: "peter-evans/create-pull-request",
+            with: {
+              base: "main",
+              branch: "auto/upgrade-node-${{ needs.version.outputs.major }}",
+              "commit-message":
+                "chore: increase Node.js version to ${{ needs.version.outputs.latest }}",
+              title:
+                "chore: increase Node.js version to ${{ needs.version.outputs.latest }}",
+              body: [
+                "This PR initiates the upgrade of Node.js from `v${{ needs.version.outputs.current }}` to `v${{ needs.version.outputs.latest }}`.",
+                "Unfortunately, not everything can be automated, and the following steps need to be completed manually:",
+                " ",
+                "- [ ] Check if the `RunsUsing` value should be updated [here](https://github.com/hashicorp/terraform-cdk-action/blob/8b74e0c471bd6eb9ea8869f1a73de83b7129717e/.projenrc.ts#L164). Check [here](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions) for supported options.",
+                "    - Note that the GitHub Actions runners don't automatically support every LTS version - sometimes they skip one.",
+                "- [ ] Run `npx projen build`",
+                " ",
+                "Please checkout this PR, complete the above steps, push the changes to this branch, and then mark this PR as ready for review to complete the upgrade. Thanks!",
+              ].join("\n"),
+              labels: "automerge,automated,security",
+              token: "${{ secrets.PROJEN_GITHUB_TOKEN }}",
+              author: "team-tf-cdk <github-team-tf-cdk@hashicorp.com>",
+              committer: "team-tf-cdk <github-team-tf-cdk@hashicorp.com>",
+              signoff: true,
+              "delete-branch": true,
+              draft: true,
+            },
+          },
         ],
         env: {
           CI: "true",

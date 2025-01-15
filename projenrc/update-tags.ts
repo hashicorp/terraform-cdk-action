@@ -41,14 +41,14 @@ export class UpdateGitTags {
       steps: [
         {
           name: "git checkout",
-          uses: "actions/checkout@v3",
+          uses: "actions/checkout",
           with: {
             "fetch-depth": 0,
           },
         },
         {
           id: "get_aliases",
-          uses: "pr-mpt/actions-semver-aliases@v2",
+          uses: "pr-mpt/actions-semver-aliases",
           with: {
             version: "${{ github.ref_name }}",
           },

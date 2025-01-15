@@ -26,7 +26,7 @@ Dependabot is also [configured](https://github.com/hashicorp/terraform-cdk-actio
 The following Actions either need to be manually triggered or require significant manual effort as part of the upgrade process:
 
 - [upgrade-node](https://github.com/hashicorp/terraform-cdk-action/actions/workflows/upgrade-node.yml): This is a custom workflow (source [here](https://github.com/hashicorp/terraform-cdk-action/blob/main/projenrc/upgrade-node.ts)) that runs once a day to check if the current minimum version of Node.js supported by this project is less than 30 days away from EOL; this check is done by [this](https://github.com/hashicorp/terraform-cdk-action/blob/main/scripts/check-node-versions.js) script using [this](https://nodejs.org/download/release/index.json) file as the source of truth. If the script determines that the current version is less than 30 days away from EOL, it runs [this](https://github.com/hashicorp/terraform-cdk-action/blob/main/scripts/update-node.sh) script to upgrade the project to the next even-numbered (i.e. LTS-eligible) version of Node.js. This workflow generates a draft PR asking the user to check if the [`RunsUsing`](https://github.com/hashicorp/terraform-cdk-action/blob/8b74e0c471bd6eb9ea8869f1a73de83b7129717e/.projenrc.ts#L164) parameter of the Action should also be updated based on the possible options described [here](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#runs-for-javascript-actions); GitHub Actions runners don't automatically support every LTS version - sometimes they skip one.
-  - There is also a [manual](https://github.com/hashicorp/terraform-cdk-action/actions/workflows/upgrade-node-manually.yml) version of this workflow in case we ever want/need to upgrade Node.js for reasons other than a version going LTS. This is nearly identical to the above workflow (and the source code is shared) except that it takes a Node.js version string as input, rather than using [this](https://github.com/hashicorp/terraform-cdk-action/blob/main/scripts/check-node-versions.js) script to determine what the new version should be.
+  - This workflow can also be manually triggered, optionally taking a hard-coded Node.js version as input in case we ever want to upgrade to a newer version without waiting until the old one is less than 30 days away from EOL.
 
 ### Not Automated
 
@@ -49,7 +49,7 @@ If you wanted to change the logic that governs when releases are triggered (such
 
 New versions of the Action are technically usable as soon as a new tag is published to GitHub; however, in order for the new version to show up on our [Marketplace](https://github.com/marketplace/actions/terraform-cdk-action) page, they must be manually published since GitHub unfortunately does not provide an API that can be used to automate Marketplace publishing. You can do this by going to the Edit Release page (URL format `https://github.com/hashicorp/terraform-cdk-action/releases/edit/v0.0.0`) and checking the box at the top:
 
-![Screenshot 2025-01-09 at 16 59 27](https://github.com/user-attachments/assets/1d0c79d1-1db8-4e2d-bcf2-27e687cfc80e)
+![Edit Release page](https://github.com/user-attachments/assets/1d0c79d1-1db8-4e2d-bcf2-27e687cfc80e)
 
 Don't forget to click the "Update release" button at the bottom of the page to save your changes. When you do, the new version is instantly posted to the Marketplace.
 

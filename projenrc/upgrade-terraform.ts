@@ -5,6 +5,7 @@
 
 import { typescript } from "projen";
 import { JobPermission, JobStep } from "projen/lib/github/workflows-model";
+import { generateRandomCron, Schedule } from "./util/random-cron";
 
 /**
  * Checks for new versions of Terraform and creates a PR with an upgrade change if there are changes.
@@ -16,7 +17,17 @@ export class UpgradeTerraform {
     if (!workflow) throw new Error("no workflow defined");
 
     workflow.on({
-      schedule: [{ cron: "39 23 * * 0" }], // Runs once a week
+      // runs once a week on Thursdays because Terraform releases happen on Wednesdays
+      schedule: [
+        {
+          cron: generateRandomCron({
+            project,
+            maxHour: 2,
+            schedule: Schedule.Weekly,
+            dayOfWeek: "4",
+          }),
+        },
+      ],
       workflowDispatch: {}, // allow manual triggering
     });
 
@@ -46,14 +57,14 @@ export class UpgradeTerraform {
         steps: [
           {
             name: "Checkout",
-            uses: "actions/checkout@v4",
+            uses: "actions/checkout",
             with: {
               "fetch-depth": 0,
             },
           },
           {
             name: "Setup Node.js",
-            uses: "actions/setup-node@v4",
+            uses: "actions/setup-node",
             with: {
               "node-version": project.minNodeVersion,
             },
@@ -75,7 +86,7 @@ export class UpgradeTerraform {
           },
           {
             name: "Get latest Terraform version",
-            uses: "actions/github-script@v7",
+            uses: "actions/github-script",
             with: {
               script: [
                 `const script = require('./scripts/check-terraform-version.js')`,

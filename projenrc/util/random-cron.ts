@@ -18,6 +18,8 @@ export interface RandomCronOptions {
   maxHour?: number;
   hourOffset?: number;
   schedule?: Schedule;
+  /** Only used if schedule is set to Weekly */
+  dayOfWeek?: string;
 }
 
 export function generateRandomCron(options: RandomCronOptions) {
@@ -34,7 +36,7 @@ export function generateRandomCron(options: RandomCronOptions) {
   const dayOfMonth = schedule === Schedule.Monthly ? "1" : "*";
   const dayOfWeek =
     schedule === Schedule.Weekly
-      ? "1"
+      ? options.dayOfWeek || "1"
       : schedule === Schedule.Weekdays
       ? "1-5"
       : "*";

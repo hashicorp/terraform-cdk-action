@@ -25,7 +25,7 @@ export class UpgradeCDKTF {
     };
 
     const createPRbase: JobStep = {
-      uses: "peter-evans/create-pull-request@v3",
+      uses: "peter-evans/create-pull-request",
       with: {
         branch: "auto/upgrade-cdktf-${{ steps.latest_version.outputs.minor }}",
         base: "main",
@@ -45,14 +45,14 @@ export class UpgradeCDKTF {
         steps: [
           {
             name: "Checkout",
-            uses: "actions/checkout@v4",
+            uses: "actions/checkout",
             with: {
               "fetch-depth": 0,
             },
           },
           {
             name: "Setup Node.js",
-            uses: "actions/setup-node@v4",
+            uses: "actions/setup-node",
             with: {
               "node-version": project.minNodeVersion,
             },
