@@ -18,7 +18,16 @@ export class UpgradeTerraform {
 
     workflow.on({
       // runs once a week on Thursdays because Terraform releases happen on Wednesdays
-      schedule: [{ cron: generateRandomCron({ project, maxHour: 2, schedule: Schedule.Weekly, dayOfWeek: "4" }) }],
+      schedule: [
+        {
+          cron: generateRandomCron({
+            project,
+            maxHour: 2,
+            schedule: Schedule.Weekly,
+            dayOfWeek: "4",
+          }),
+        },
+      ],
       workflowDispatch: {}, // allow manual triggering
     });
 

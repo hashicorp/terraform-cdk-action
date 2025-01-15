@@ -18,7 +18,9 @@ export class UpgradeNode {
     if (!workflow) throw new Error("no workflow defined");
 
     workflow.on({
-      schedule: [{ cron: generateRandomCron({ project, maxHour: 4, hourOffset: 6 }) }], // runs once a day
+      schedule: [
+        { cron: generateRandomCron({ project, maxHour: 4, hourOffset: 6 }) },
+      ], // runs once a day
       workflowDispatch: {
         inputs: {
           version: {

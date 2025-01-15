@@ -36,7 +36,7 @@ export function generateRandomCron(options: RandomCronOptions) {
   const dayOfMonth = schedule === Schedule.Monthly ? "1" : "*";
   const dayOfWeek =
     schedule === Schedule.Weekly
-      ? (options.dayOfWeek || "1")
+      ? options.dayOfWeek || "1"
       : schedule === Schedule.Weekdays
       ? "1-5"
       : "*";
