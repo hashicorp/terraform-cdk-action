@@ -240,7 +240,7 @@ import * as core from "@actions/core";`,
         steps: [
           {
             name: "git checkout",
-            uses: "actions/checkout@v3",
+            uses: "actions/checkout",
             with: {
               "fetch-depth": 0,
             },
@@ -252,7 +252,7 @@ import * as core from "@actions/core";`,
           },
           {
             name: "Notify Slack via a custom Workflow webhook",
-            uses: "slackapi/slack-github-action@v1",
+            uses: "slackapi/slack-github-action",
             env: { SLACK_WEBHOOK_URL: "${{ secrets.SLACK_WEBHOOK_URL }}" },
             with: {
               payload: JSON.stringify({

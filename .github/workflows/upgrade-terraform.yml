@@ -3,7 +3,7 @@
 name: upgrade-terraform
 on:
   schedule:
-    - cron: 39 23 * * 0
+    - cron: 26 0 * * 4
   workflow_dispatch: {}
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
