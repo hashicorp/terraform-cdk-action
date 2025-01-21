@@ -18,7 +18,7 @@ const githubActionPinnedVersions = {
   "hashicorp/setup-copywrite": "32638da2d4e81d56a0764aa1547882fc4d209636", // v1.1.3
   "peter-evans/create-pull-request": "67ccf781d68cd99b580ae25a5c18a1cc84ffff1f", // v7.0.6
   "pr-mpt/actions-semver-aliases": "01b2241f545f14efe72edaa2fcec49705dbe910d", // v2.0.0
-  "slackapi/slack-github-action": "37ebaef184d7626c5f204ab8d3baff4262dd30f0", // v1.27.0
+  "slackapi/slack-github-action": "485a9d42d3a73031f12ec201c457e2162c45d02d", // v2.0.0
 };
 
 const inputs = {
