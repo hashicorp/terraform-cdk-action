@@ -101,8 +101,8 @@ jobs:
         id: git_label
         run: echo "version=$(git describe --tags)" >> $GITHUB_OUTPUT
       - name: Notify Slack via a custom Workflow webhook
-        uses: slackapi/slack-github-action@37ebaef184d7626c5f204ab8d3baff4262dd30f0
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        uses: slackapi/slack-github-action@485a9d42d3a73031f12ec201c457e2162c45d02d
         with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: webhook-trigger
           payload: '{"repository":"terraform-cdk-action","version":"${{ steps.git_label.outputs.version }}"}'

@@ -253,8 +253,9 @@ import * as core from "@actions/core";`,
           {
             name: "Notify Slack via a custom Workflow webhook",
             uses: "slackapi/slack-github-action",
-            env: { SLACK_WEBHOOK_URL: "${{ secrets.SLACK_WEBHOOK_URL }}" },
             with: {
+              webhook: "${{ secrets.SLACK_WEBHOOK_URL }}",
+              "webhook-type": "webhook-trigger",
               payload: JSON.stringify({
                 repository: name,
                 version: "${{ steps.git_label.outputs.version }}",
