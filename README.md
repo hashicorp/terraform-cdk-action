@@ -48,6 +48,10 @@ jobs:
         with:
           node-version: 20
 
+      - use: actions/setup-terraform@v3
+        with:
+          terraform_version: 1.10.4
+
       - name: Install dependencies
         run: yarn install
 
@@ -96,6 +100,10 @@ jobs:
         with:
           node-version: 20
 
+      - use: actions/setup-terraform@v3
+        with:
+          terraform_version: 1.10.4
+
       - name: Install dependencies
         run: yarn install
 
@@ -139,6 +147,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - use: actions/setup-terraform@v3
+        with:
+          terraform_version: 1.10.4
 
       - name: Install dependencies
         run: yarn install

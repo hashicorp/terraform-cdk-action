@@ -13,7 +13,7 @@ import { execSync } from "child_process";
 import * as core from "@actions/core";
 
 /**
- * Check if wanted version of Terraform is already available to prevent extra downloads
+ * Check if wanted version of Terraform is already available
  *
  * @param version expected version of Terraform
  */
@@ -43,7 +43,7 @@ async function checkVersionAvailability(version: string): Promise<boolean> {
   }
 }
 
-export async function setupTerraform(version: string) {
+export async function ensureTerraform(version: string) {
   if (!(await checkVersionAvailability(version))) {
     throw new Error(
       `Terraform not installed, please use the setup-terraform action with the specified version to install terraform.`

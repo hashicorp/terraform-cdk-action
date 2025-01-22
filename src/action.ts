@@ -10,7 +10,7 @@ import * as github from "@actions/github";
 import { CommentController } from "./comment";
 import * as input from "./inputs";
 import { Inputs } from "./models";
-import { setupTerraform } from "./setup-terraform";
+import { ensureTerraform } from "./setup-terraform";
 
 function hasTerraformChanges(output: string): Boolean {
   return !output.includes(
@@ -76,8 +76,8 @@ async function execute(
     runUrl?: string
   ) => Promise<void>
 ): Promise<void> {
-  core.debug(`Installing terraform`);
-  await setupTerraform(inputs.terraformVersion);
+  core.debug(`Checking if terraform is installed`);
+  await ensureTerraform(inputs.terraformVersion);
 
   const mainCommand = `${cdktfCommand} ${inputs.cdktfArgs}`;
   const fullCdktfCommand = inputs.customNpxArgs

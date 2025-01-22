@@ -20,4 +20,5 @@ CI=0 npx projen
 npx projen build
 
 echo "Updating README"
+sed -i 's/terraform_version: .*/terraformVersion: '"$TERRAFORM_VERSION"'/' "$PROJECT_ROOT/README.md"
 sed -i 's/terraformVersion: .*/terraformVersion: '"$TERRAFORM_VERSION"'/' "$PROJECT_ROOT/README.md"
