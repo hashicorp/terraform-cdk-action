@@ -46,7 +46,7 @@ async function checkVersionAvailability(version: string): Promise<boolean> {
 export async function ensureTerraform(version: string) {
   if (!(await checkVersionAvailability(version))) {
     throw new Error(
-      `Terraform not installed, please use the setup-terraform action with the specified version to install terraform.`
+      `Terraform not installed, please use the setup-terraform action with the specified version to install terraform. You can find it at github.com/hashicorp/setup-terraform`
     );
   }
 }
