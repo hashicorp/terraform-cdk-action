@@ -2,24 +2,24 @@
 
 The Terraform CDK GitHub Action allows you to run CDKTF as part of your CI/CD workflow.
 
-<!-- action-docs-inputs -->
+<!-- action-docs-inputs action="action.yml" -->
 ## Inputs
 
-| parameter | description | required | default |
+| name | description | required | default |
 | --- | --- | --- | --- |
-| cdktfVersion | The version of CDKTF to use | `false` | 0.20.11 |
-| terraformVersion | The version of Terraform to use | `false` | 1.10.5 |
-| workingDirectory | The directory to use for the project | `false` | ./ |
-| mode | What action to take: `synth-only` runs only the synthesis, `plan-only` only runs a plan, `auto-approve-apply` runs a plan and then performs an apply, `auto-approve-destroy` runs a plan and then performs a destroy | `true` |  |
-| stackName | The stack to run / plan, only required when the mode is `plan-only` or `plan-and-apply` | `false` |  |
-| terraformCloudToken | The Terraform Cloud / Terraform Enterprise token to use | `false` |  |
-| githubToken | The github token to use | `false` |  |
-| commentOnPr | Whether to comment the plan / the status on the PR | `false` | true |
-| updateComment | Whether to update the last comment on the PR rather than adding a new comment | `false` | true |
-| customNpxArgs | The additional CLI arguments to pass to npx as part of the cdktf-cli execution. | `false` |  |
-| cdktfArgs | The additional CLI arguments to pass to cdktf as part of the cdktf-cli execution. | `false` |  |
-| suppressOutput | Whether to suppress the output of the action in PR comments | `false` | false |
-<!-- action-docs-inputs -->
+| `cdktfVersion` | <p>The version of CDKTF to use</p> | `false` | `0.20.11` |
+| `terraformVersion` | <p>The version of Terraform to use</p> | `false` | `1.10.5` |
+| `workingDirectory` | <p>The directory to use for the project</p> | `false` | `./` |
+| `mode` | <p>What action to take: <code>synth-only</code> runs only the synthesis, <code>plan-only</code> only runs a plan, <code>auto-approve-apply</code> runs a plan and then performs an apply, <code>auto-approve-destroy</code> runs a plan and then performs a destroy</p> | `true` | `""` |
+| `stackName` | <p>The stack to run / plan, only required when the mode is <code>plan-only</code> or <code>plan-and-apply</code></p> | `false` | `""` |
+| `terraformCloudToken` | <p>The Terraform Cloud / Terraform Enterprise token to use</p> | `false` | `""` |
+| `githubToken` | <p>The github token to use</p> | `false` | `""` |
+| `commentOnPr` | <p>Whether to comment the plan / the status on the PR</p> | `false` | `true` |
+| `updateComment` | <p>Whether to update the last comment on the PR rather than adding a new comment</p> | `false` | `true` |
+| `customNpxArgs` | <p>The additional CLI arguments to pass to npx as part of the cdktf-cli execution.</p> | `false` | `""` |
+| `cdktfArgs` | <p>The additional CLI arguments to pass to cdktf as part of the cdktf-cli execution.</p> | `false` | `""` |
+| `suppressOutput` | <p>Whether to suppress the output of the action in PR comments</p> | `false` | `false` |
+<!-- action-docs-inputs action="action.yml" -->
 
 ## Example Configurations
 
