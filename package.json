@@ -40,7 +40,7 @@
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
     "@vercel/ncc": "^0.38.3",
-    "action-docs": "^1.2.0",
+    "action-docs": "^2.5.0",
     "commit-and-tag-version": "^12",
     "constructs": "10.3.0",
     "eslint": "^9",
