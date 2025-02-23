@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
+import { readFile } from "node:fs/promises";
 import * as core from "@actions/core";
 import { exec } from "@actions/exec";
 import * as github from "@actions/github";
@@ -210,24 +211,29 @@ export async function run(): Promise<void> {
         );
       }
       await execute(
-        `apply ${inputs.stackName} --auto-approve`,
+        `apply ${inputs.stackName} --auto-approve --outputs-file .cdktf-output.json`,
         inputs,
         (output, runUrl) =>
-          hasTerraformChanges(output)
-            ? postComment(
-                commentController,
-                `✅ Successfully applied Terraform CDK Stack '${inputs.stackName}'`,
-                runUrl,
-                inputs.suppressOutput ? undefined : output,
-                "Show Run"
-              )
-            : postComment(
-                commentController,
-                `🟰 No changes to apply in Terraform CDK Stack '${inputs.stackName}'`,
-                runUrl,
-                inputs.suppressOutput ? undefined : output,
-                "Show Run"
-              ),
+          Promise.all([
+            readFile(".cdktf-output.json").then((data: Buffer) =>
+              core.setOutput("outputs", data.toString())
+            ),
+            hasTerraformChanges(output)
+              ? postComment(
+                  commentController,
+                  `✅ Successfully applied Terraform CDK Stack '${inputs.stackName}'`,
+                  runUrl,
+                  inputs.suppressOutput ? undefined : output,
+                  "Show Run"
+                )
+              : postComment(
+                  commentController,
+                  `🟰 No changes to apply in Terraform CDK Stack '${inputs.stackName}'`,
+                  runUrl,
+                  inputs.suppressOutput ? undefined : output,
+                  "Show Run"
+                ),
+          ]).then(),
         (error, output, runUrl) =>
           postComment(
             commentController,

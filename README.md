@@ -21,6 +21,15 @@ The Terraform CDK GitHub Action allows you to run CDKTF as part of your CI/CD wo
 | `suppressOutput` | <p>Whether to suppress the output of the action in PR comments</p> | `false` | `false` |
 <!-- action-docs-inputs action="action.yml" -->
 
+<!-- action-docs-outputs action="action.yml" -->
+## Outputs
+
+| name | description |
+| --- | --- |
+| `outputs` | <p>The stack output values</p> |
+<!-- action-docs-outputs action="action.yml" -->
+
+
 ## Example Configurations
 
 The examples assume you have your provider credentials in Terraform Cloud and you are using remote execution to access the provider credentials or you are passing the provider credentials as environment variables [through the `env` key on the action](https://github.com/Azure/actions-workflow-samples/blob/master/assets/create-secrets-for-GitHub-workflows.md#consume-secrets-in-your-workflow). Please don't use this action with the default `local` backend as the state might get lost and locking might not work.
