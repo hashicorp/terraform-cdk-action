@@ -97,6 +97,13 @@ const inputs = {
   },
 };
 
+const outputs = {
+  outputs: {
+    description: "The stack output values",
+    type: "string",
+  },
+};
+
 const repoName = "terraform-cdk-action";
 const description =
   "The Terraform CDK GitHub Action allows you to run CDKTF as part of your CI/CD workflow.";
@@ -105,6 +112,7 @@ const project = new TerraformCdkActionProject({
   name: repoName,
   description,
   inputs,
+  outputs,
   metadata: {
     author: "HashiCorp, Inc.",
     description,
