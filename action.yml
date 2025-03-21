@@ -54,3 +54,6 @@ inputs:
     description: Whether to suppress the output of the action in PR comments
     default: "false"
     required: false
+outputs:
+  outputs:
+    description: The stack output values
