@@ -7,16 +7,16 @@ import { TerraformCdkActionProject } from "./projenrc";
 
 const githubActionPinnedVersions = {
   "actions/checkout": "11bd71901bbe5b1630ceea73d27597364c9af683", // v4.2.2
-  "actions/download-artifact": "fa0a91b85d4f404e444e00e005971372dc801d16", // v4.1.8
+  "actions/download-artifact": "95815c38cf2ff2164869cbab79da8d1f422bc89e", // v4.2.1
   "actions/github-script": "60a0d83039c74a4aee543508d2ffcb1c3799cdea", // v7.0.1
-  "actions/setup-node": "1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a", // v4.2.0
+  "actions/setup-node": "cdca7365b2dadb8aad0a33bc7601856ffabcc48e", // v4.3.0
   "actions/stale": "5bef64f19d7facfb25b37b414482c7164d639639", // v9.1.0
-  "actions/upload-artifact": "65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08", // v4.6.0
+  "actions/upload-artifact": "ea165f8d65b6e75b540449e92b4886f43607fa02", // v4.6.2
   "amannn/action-semantic-pull-request":
     "0723387faaf9b38adef4775cd42cfd5155ed6017", // v5.5.3
   "dessant/lock-threads": "1bf7ec25051fe7c00bdd17e6a7cf3d7bfb7dc771", // v5.0.1
   "hashicorp/setup-copywrite": "32638da2d4e81d56a0764aa1547882fc4d209636", // v1.1.3
-  "peter-evans/create-pull-request": "67ccf781d68cd99b580ae25a5c18a1cc84ffff1f", // v7.0.6
+  "peter-evans/create-pull-request": "271a8d0340265f705b14b6d32b9829c1cb33d45e", // v7.0.8
   "pr-mpt/actions-semver-aliases": "01b2241f545f14efe72edaa2fcec49705dbe910d", // v2.0.0
   "slackapi/slack-github-action": "485a9d42d3a73031f12ec201c457e2162c45d02d", // v2.0.0
 };

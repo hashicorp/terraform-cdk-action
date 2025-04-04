@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup Node.js
-        uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a
+        uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e
         with:
           node-version: 20.9.0
       - name: Install
@@ -61,7 +61,7 @@ jobs:
           sed -i 's/terraform-cdk-action@v.*/terraform-cdk-action@v'"$NEW_GHA_VERSION"'/' "./README.md"
       - name: Create pull request for a breaking change
         if: steps.current_version.outputs.minor != steps.latest_version.outputs.minor
-        uses: peter-evans/create-pull-request@67ccf781d68cd99b580ae25a5c18a1cc84ffff1f
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e
         with:
           branch: auto/upgrade-cdktf-${{ steps.latest_version.outputs.minor }}
           base: main
@@ -78,7 +78,7 @@ jobs:
             This is considered a breaking change because anyone who does not manually specify a `cdktfVersion` in their action configuration will automatically start using the new version.
       - name: Create pull request for a non-breaking change
         if: steps.current_version.outputs.minor == steps.latest_version.outputs.minor
-        uses: peter-evans/create-pull-request@67ccf781d68cd99b580ae25a5c18a1cc84ffff1f
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e
         with:
           branch: auto/upgrade-cdktf-${{ steps.latest_version.outputs.minor }}
           base: main
