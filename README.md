@@ -8,7 +8,7 @@ The Terraform CDK GitHub Action allows you to run CDKTF as part of your CI/CD wo
 | name | description | required | default |
 | --- | --- | --- | --- |
 | `cdktfVersion` | <p>The version of CDKTF to use</p> | `false` | `0.20.12` |
-| `terraformVersion` | <p>The version of Terraform to use</p> | `false` | `1.11.4` |
+| `terraformVersion` | <p>The version of Terraform to use</p> | `false` | `1.12.0` |
 | `workingDirectory` | <p>The directory to use for the project</p> | `false` | `./` |
 | `mode` | <p>What action to take: <code>synth-only</code> runs only the synthesis, <code>plan-only</code> only runs a plan, <code>auto-approve-apply</code> runs a plan and then performs an apply, <code>auto-approve-destroy</code> runs a plan and then performs a destroy</p> | `true` | `""` |
 | `stackName` | <p>The stack to run / plan, only required when the mode is <code>plan-only</code> or <code>plan-and-apply</code></p> | `false` | `""` |
@@ -50,7 +50,7 @@ jobs:
 
       - use: actions/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: 1.12.0
 
       - name: Install dependencies
         run: yarn install
@@ -63,10 +63,10 @@ jobs:
         run: yarn test
 
       - name: Run Terraform CDK
-        uses: hashicorp/terraform-cdk-action@v8
+        uses: hashicorp/terraform-cdk-action@v9
         with:
           cdktfVersion: 0.20.12
-          terraformVersion: 1.11.4
+          terraformVersion: 1.12.0
           mode: plan-only
           stackName: my-stack
           terraformCloudToken: ${{ secrets.TF_API_TOKEN }}
@@ -102,7 +102,7 @@ jobs:
 
       - use: actions/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: 1.12.0
 
       - name: Install dependencies
         run: yarn install
@@ -115,10 +115,10 @@ jobs:
         run: yarn test
 
       - name: Run Terraform CDK
-        uses: hashicorp/terraform-cdk-action@v8
+        uses: hashicorp/terraform-cdk-action@v9
         with:
           cdktfVersion: 0.20.12
-          terraformVersion: 1.11.4
+          terraformVersion: 1.12.0
           mode: auto-approve-apply
           stackName: my-stack
           terraformCloudToken: ${{ secrets.TF_API_TOKEN }}
@@ -150,7 +150,7 @@ jobs:
 
       - use: actions/setup-terraform@v3
         with:
-          terraform_version: 1.11.4
+          terraform_version: 1.12.0
 
       - name: Install dependencies
         run: yarn install
@@ -163,10 +163,10 @@ jobs:
         run: yarn test
 
       - name: Test the synth
-        uses: hashicorp/terraform-cdk-action@v8
+        uses: hashicorp/terraform-cdk-action@v9
         with:
           cdktfVersion: 0.20.12
-          terraformVersion: 1.11.4
+          terraformVersion: 1.12.0
           mode: synth-only
           stackName: my-stack
 ```
