@@ -30,7 +30,7 @@ const inputs = {
   },
   terraformVersion: {
     description: "The version of Terraform to use",
-    default: "1.13.2",
+    default: "1.13.3",
     required: false,
     type: "string",
   },
