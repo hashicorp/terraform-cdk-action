@@ -1,5 +1,5 @@
 /**
- * Copyright (c) HashiCorp, Inc.
+ * Copyright IBM Corp. 2022, 2025
  * SPDX-License-Identifier: MPL-2.0
  */
 
@@ -142,7 +142,7 @@ export class TerraformCdkActionProject extends GitHubActionTypeScriptProject {
       marker: true,
       lines: [
         `/**
- * Copyright (c) HashiCorp, Inc.
+ * Copyright IBM Corp. 2022, 2025
  * SPDX-License-Identifier: MPL-2.0
  */
 
