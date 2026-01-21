@@ -12,7 +12,7 @@ export class CustomizedLicense extends License {
 
   synthesizeContent(resolver: IResolver) {
     return (
-      "Copyright (c) 2022 HashiCorp, Inc.\n\n" +
+      "Copyright IBM Corp. 2022, 2025\n\n" +
       super.synthesizeContent(resolver)
     );
   }
